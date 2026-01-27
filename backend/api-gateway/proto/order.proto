@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = "/internal/pb/order;orderpb";
+
+import "google/protobuf/timestamp.proto";
+
+service OrderService {
+  // --- Client ---
+  rpc GetOrderHistory(GetOrderHistoryRequest) returns (OrderList);
+  rpc GetOrderDetail(GetOrderDetailRequest) returns (OrderDetail);
+  rpc Checkout(CheckoutRequest) returns (CheckoutResponse);
+
+  // --- Admin ---
+  rpc GetAllOrders(AdminFilterRequest) returns (OrderList);
+  rpc UpdateOrderStatus(UpdateStatusRequest) returns (OrderUpdateResponse);
+}
+
+// --- Message Definitions ---
+
+enum OrderStatus {
+  PENDING = 0;          // Menunggu Pembayaran
+  PAID = 1;             // Sudah dibayar, menunggu konfirmasi/packing
+  PROCESSED = 2;        // Sedang dipacking
+  SHIPPED = 3;          // Sudah diserahkan ke kurir
+  DELIVERED = 4;        // Sampai di tujuan
+  CANCELLED = 5;        // Dibatalkan user/admin
+  FAILED = 6;           // Pembayaran gagal/expired
+}
+
+// Representasi Snapshot Alamat (JSONB di DB)
+message AddressSnapshot {
+  string street = 1;
+  string city = 2;
+  string province = 3;
+  string zip_code = 4;
+  string receiver_name = 5;
+  string receiver_phone = 6;
+}
+
+// Representasi Item dalam Order
+message OrderItem {
+  string id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+  
+  // Snapshot Data
+  string product_name_snapshot = 4;
+  string product_image_snapshot = 5;
+  int64 product_price_snapshot = 6;
+  int32 product_weight_snapshot = 7;
+}
+
+// Representasi Order Utama
+message OrderDetail {
+  string id = 1;
+  string user_id = 2;
+  OrderStatus status = 3;
+  int64 total_amount = 4;       
+  int64 shipping_cost = 5;
+  AddressSnapshot shipping_address = 6;
+  
+  // Info Pengiriman
+  string shipping_courier = 7;  
+  string shipping_service = 8;  
+  string tracking_number = 9;   
+  
+  repeated OrderItem items = 10;
+  google.protobuf.Timestamp created_at = 11;
+}
+
+// 1. Get Order History
+message GetOrderHistoryRequest {
+  string user_id = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  OrderStatus status_filter = 4; // Opsional: filter tab "Belum Bayar", "Selesai"
+}
+
+message OrderList {
+  repeated OrderDetail orders = 1;
+  int32 total_count = 2;
+  int32 current_page = 3;
+}
+
+// 2. Get Order Detail
+message GetOrderDetailRequest {
+  string order_id = 1;
+  string user_id = 2; 
+}
+
+// 3. Checkout
+message CheckoutRequest {
+  string user_id = 1;
+  string address_id = 2; 
+  string courier_code = 3;
+  string service_code = 4;
+  string payment_method = 5;
+}
+
+message CheckoutResponse {
+  string order_id = 1;
+  string payment_url = 2;     
+  string payment_token = 3;   
+  int64 total_amount = 4;
+  google.protobuf.Timestamp expiry_time = 5; 
+}
+
+// 4. Admin Filter
+message AdminFilterRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string user_id = 3;       
+  OrderStatus status = 4;     
+  string date_start = 5;      
+  string date_end = 6;
+}
+
+// 5. Update Status
+message UpdateStatusRequest {
+  string order_id = 1;
+  OrderStatus new_status = 2;
+  string notes = 3; // Reason for cancellation
+}
+
+message OrderUpdateResponse {
+  bool success = 1;
+  string message = 2;
+  OrderStatus current_status = 3;
+}
