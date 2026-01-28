@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package cart;
+
+option go_package = "/internal/pb/cart;cartpb";
+
+import "google/protobuf/empty.proto";
+
+service CartService {
+  rpc GetCart(GetCartRequest) returns (CartDetails);
+  rpc AddItem(AddItemRequest) returns (CartItem);
+  rpc RemoveItem(RemoveItemRequest) returns (google.protobuf.Empty);
+  rpc UpdateItem(UpdateItemRequest) returns (google.protobuf.Empty);
+  rpc ClearCart(ClearCartRequest) returns (google.protobuf.Empty);
+}
+
+// --- Message Definitions ---
+
+message CartItem {
+  string id = 1;         
+  string product_id = 2;
+  int32 quantity = 3;
+  string product_name = 4;
+  string product_image = 5;
+  int64 product_price = 6;
+  int64 subtotal = 7;     
+}
+
+message CartDetails {
+  string user_id = 1;
+  repeated CartItem items = 2;
+  int64 total_price = 3;  
+  int32 total_items = 4;  
+}
+
+// 1. Get Cart
+message GetCartRequest {
+  string user_id = 1;
+}
+
+// 2. Add Item
+message AddItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+}
+
+// 3. Remove Item
+message RemoveItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+}
+
+// 4. Update Quantity Item
+message UpdateItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+}
+
+// 5. Clear Cart
+message ClearCartRequest {
+  string user_id = 1;
+}
