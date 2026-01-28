@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "/internal/pb/auth;authpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto"; 
+
+// Service Definition
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty);
+  rpc ResetPassword(ResetPasswordRequest) returns (google.protobuf.Empty);
+}
+
+// --- Message Definitions ---
+
+// Merepresentasikan entitas Account
+message Account {
+  string id = 1;         
+  string email = 2;
+  string username = 3;
+  string role = 4;
+  bool is_verified = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+// 1. Register
+message RegisterRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  string id = 1; 
+}
+
+// 2. Login
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_in = 3;
+}
+
+// 3. Refresh Token
+message RefreshTokenRequest {
+  string user_id = 1;
+  string email = 2;
+  string role = 3;
+}
+
+message TokenResponse {
+  string access_token = 1;
+  string refresh_token = 2; 
+  int64 expires_in = 3;
+}
+
+// 4. Change Password
+message ChangePasswordRequest {
+  string user_id = 1; 
+  string old_password = 2;
+  string new_password = 3;
+}
+
+// 5. Reset Password
+// Diasumsikan ini langkah akhir di mana user mengirim token reset + password baru
+message ResetPasswordRequest {
+  string reset_token = 1; 
+  string new_password = 2;
+}
