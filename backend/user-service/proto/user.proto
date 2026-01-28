@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/internal/pb/user;userpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc GetUserProfile(GetUserProfileRequest) returns (UserProfile);
+  rpc UpdateUserProfile(UpdateUserProfileRequest) returns (UserProfile);
+  rpc AddAddress(AddAddressRequest) returns (AddressResponse);
+  rpc GetAddress(GetAddressRequest) returns (AddressDetail);
+  rpc UpdateAddress(UpdateAddressRequest) returns (AddressDetail);
+  rpc DeleteAddress(DeleteAddressRequest) returns (google.protobuf.Empty);
+}
+
+// --- Message Definitions ---
+
+// Representasi User Profile
+message UserProfile {
+  string id = 1;
+  string full_name = 2;
+  string phone_number = 3;
+  repeated AddressDetail addresses = 4; 
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+// Representasi detail satu alamat
+message AddressDetail {
+  string id = 1;
+  string user_id = 2;
+  string street = 3;
+  string city = 4;
+  string province = 5;
+  string zip_code = 6;
+  bool is_primary = 7;
+}
+
+// 1. Get User Profile
+message GetUserProfileRequest {
+  string user_id = 1;
+}
+
+// 2. Update User Profile
+message UpdateUserProfileRequest {
+  string user_id = 1;      
+  string full_name = 2;
+  string phone_number = 3;
+}
+
+// 3. Add Address
+message AddAddressRequest {
+  string user_id = 1;
+  string street = 2;
+  string city = 3;
+  string province = 4;
+  string zip_code = 5;
+  bool is_primary = 6;
+}
+
+message AddressResponse {
+  string id = 1;        
+  bool is_primary = 2;
+}
+
+// 4. Get Address (Penting untuk Order Service)
+message GetAddressRequest {
+  string address_id = 1;
+  string user_id = 2; 
+}
+
+// 5. Update Address
+message UpdateAddressRequest {
+  string address_id = 1;
+  string user_id = 2;
+  string street = 3;
+  string city = 4;
+  string province = 5;
+  string zip_code = 6;
+  bool is_primary = 7;
+}
+
+// 6. Delete Address
+message DeleteAddressRequest {
+  string address_id = 1;
+  string user_id = 2;
+}
