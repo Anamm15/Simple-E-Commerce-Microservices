@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package shipping;
+
+option go_package = "/internal/pb/shipping;shippingpb";
+
+import "google/protobuf/timestamp.proto";
+
+service ShippingService {
+  rpc CalculateCost(ShippingCostRequest) returns (ShippingCostResponse);
+  rpc InputTrackingNumber(InputTrackingRequest) returns (ShipmentDetail);
+  rpc GetShipmentStatus(GetShipmentStatusRequest) returns (ShipmentDetail);
+}
+
+// --- Message Definitions ---
+
+// Representasi tabel Shipments
+message ShipmentDetail {
+  string id = 1;
+  string order_id = 2;
+  string courier_code = 3; 
+  string service_code = 4;   
+  string tracking_number = 5;
+  string status = 6;          
+  int64 shipping_cost = 7;
+  google.protobuf.Timestamp estimated_delivery = 8;
+}
+
+// 1. Calculate Cost
+message ShippingCostRequest {
+  string origin_city_id = 1;     
+  string destination_city_id = 2; 
+  int32 total_weight_g = 3;       
+  string courier_code = 4;      
+  string service_code = 5;      
+}
+
+message ShippingCostResponse {
+  string courier_code = 1;
+  string service_code = 2;
+  int64 cost = 3;
+  string estimated_time = 4; 
+}
+
+// 2. Input Tracking Number
+message InputTrackingRequest {
+  string order_id = 1;    
+  string tracking_number = 2;
+  string courier_code = 3;
+}
+
+// 3. Get Status
+message GetShipmentStatusRequest {
+  string order_id = 1;
+}
