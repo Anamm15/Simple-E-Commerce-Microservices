@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+package product;
+
+option go_package = "/internal/pb/product;productpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service ProductService {
+  // Public / User Facing
+  rpc GetProducts(SearchFilterRequest) returns (ProductList);
+  rpc GetProductDetail(GetProductDetailRequest) returns (ProductDetail);
+  rpc GetProductBatch(GetProductBatchRequest) returns (ProductBatchResponse);
+
+  // Admin / Seller Operations
+  rpc CreateProduct(CreateProductRequest) returns (ProductDetail);
+  rpc UpdateProduct(UpdateProductRequest) returns (ProductDetail);
+  rpc DeleteProduct(DeleteProductRequest) returns (google.protobuf.Empty);
+}
+
+// --- Message Definitions ---
+
+// Representasi satu entity Product
+message Product {
+  string id = 1;
+  string name = 2;
+  string slug = 3;
+  string description =4;
+  int64 price = 5;      
+  int32 weight_g = 6;
+  string thumbnail = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message ProductDetail {
+  Product product = 1;
+  repeated Image images = 2; 
+  repeated Category categories = 3;
+  repeated Review reviews = 4;        
+  float average_rating = 5;          
+  int32 total_reviews = 6;
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+} 
+
+message Image {
+  string id = 1;
+  string url = 2;
+}
+
+message Review {
+  string id = 1;
+  string user_id = 2;
+  string user_name = 3; 
+  int32 rating = 4;   
+  string comment = 5;
+  google.protobuf.Timestamp created_at = 6;
+}
+
+// 1. Get Products (Search & Filter)
+message SearchFilterRequest {
+  string search_query = 1;
+  string category_slug = 2;
+  int64 min_price = 3;
+  int64 max_price = 4;
+  int32 page = 5;
+  int32 limit = 6;
+}
+
+message ProductList {
+  repeated Product products = 1;
+  int32 total_count = 2;
+  int32 current_page = 3;
+}
+
+// 2. Get Product Detail
+message GetProductDetailRequest {
+  string id = 1;
+  string slug = 2;
+}
+
+// 3. Get Product Batch (Vital untuk Order/Cart)
+message GetProductBatchRequest {
+  repeated string product_ids = 1;
+}
+
+message ProductBatchResponse {
+  // Map ID Product -> Object Product
+  // Memudahkan Cart Service mencocokkan ID item dengan detail produknya
+  map<string, Product> products = 1; 
+}
+
+// 4. Create Product
+message CreateProductRequest {
+  string category_id = 1;
+  string name = 2;
+  string description = 3;
+  int64 price = 4;
+  int32 weight_g = 5;
+  int32 initial_stock = 8; 
+}
+
+// 5. Update Product
+message UpdateProductRequest {
+  string id = 1;
+  string category_id = 2;
+  string name = 3;
+  string description = 4;
+  int64 price = 5;
+  int32 weight_g = 6;
+}
+
+// 6. Delete Product
+message DeleteProductRequest {
+  string id = 1;
+}
