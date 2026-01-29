@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = "/internal/pb/payment;paymentpb";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service PaymentService {
+  rpc CreatePayment(CreatePaymentRequest) returns (PaymentResponse);
+  rpc WebhookPayment(WebhookRequest) returns (google.protobuf.Empty);
+}
+
+// --- Message Definitions ---
+
+message PaymentDetail {
+  string id = 1;
+  string order_id = 2;
+  string midtrans_transaction_id = 3;
+  int64 amount = 4;
+  string payment_method = 5;  
+  string status = 6;    
+  google.protobuf.Timestamp created_at = 7;
+}
+
+// 1. Create Payment
+message CreatePaymentRequest {
+  string order_id = 1;
+  int64 amount = 2;
+  string customer_name = 3;
+  string customer_email = 4;
+  string customer_phone_number = 5;
+}
+
+message PaymentItem {
+  string id = 1;
+  string name = 2;
+  int64 price = 3;
+  int32 quantity = 4;
+}
+
+message PaymentResponse {
+  string payment_id = 1;     
+  string token = 2;      
+  string redirect_url = 3;    
+}
+
+// 2. Webhook
+message WebhookRequest {
+  string order_id = 1;
+  string transaction_status = 2; 
+  string fraud_status = 3;     
+  string payment_type = 4;
+  string transaction_id = 5;    
+}
+
+// 3. Check Status
+message CheckStatusRequest {
+  string order_id = 1;
+}
