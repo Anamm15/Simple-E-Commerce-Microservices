@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"api-gateway/internal/dto"
-	"api-gateway/internal/helpers/constants"
+	"api-gateway/internal/helper/constant"
 	productpb "api-gateway/internal/pb/product"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func NewProductController(productClient productpb.ProductServiceClient) *Product
 func (pc *ProductController) GetProducts(c *gin.Context) {
 	var req dto.SearchProductRequestDTO
 	if err := c.ShouldBindQuery(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -40,12 +40,12 @@ func (pc *ProductController) GetProducts(c *gin.Context) {
 
 	grpcRes, err := pc.productClient.GetProducts(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -58,19 +58,19 @@ func (pc *ProductController) GetProductDetail(c *gin.Context) {
 
 	grpcRes, err := pc.productClient.GetProductDetail(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
 func (pc *ProductController) CreateProduct(c *gin.Context) {
 	var req dto.CreateProductRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -88,12 +88,12 @@ func (pc *ProductController) CreateProduct(c *gin.Context) {
 
 	grpcRes, err := pc.productClient.CreateProduct(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	c.JSON(http.StatusCreated, res)
 }
 
@@ -102,7 +102,7 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 
 	var req dto.UpdateProductRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -120,12 +120,12 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 
 	grpcRes, err := pc.productClient.UpdateProduct(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -138,11 +138,11 @@ func (pc *ProductController) DeleteProduct(c *gin.Context) {
 
 	_, err := pc.productClient.DeleteProduct(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
 	c.JSON(http.StatusOK, res)
 }

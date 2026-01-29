@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
-	grpc_clients "api-gateway/internal/grpc_clients"
+	grpc_client "api-gateway/internal/grpc_client"
 
-	"api-gateway/internal/routes"
+	"api-gateway/internal/route"
 )
 
 func main() {
@@ -22,62 +22,62 @@ func main() {
 	log.Println("🔌 Initializing gRPC Clients...")
 
 	// Auth Service
-	authSvc, err := grpc_clients.InitAuthClient(os.Getenv("AUTH_SERVICE_HOST"), os.Getenv("AUTH_SERVICE_PORT"))
+	authSvc, err := grpc_client.InitAuthClient(os.Getenv("AUTH_SERVICE_HOST"), os.Getenv("AUTH_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Auth Client: %v", err)
 	}
 
 	// User Service
-	userSvc, err := grpc_clients.InitUserClient(os.Getenv("USER_SERVICE_HOST"), os.Getenv("USER_SERVICE_PORT"))
+	userSvc, err := grpc_client.InitUserClient(os.Getenv("USER_SERVICE_HOST"), os.Getenv("USER_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init User Client: %v", err)
 	}
 
 	// Product Service
-	productSvc, err := grpc_clients.InitProductClient(os.Getenv("PRODUCT_SERVICE_HOST"), os.Getenv("PRODUCT_SERVICE_PORT"))
+	productSvc, err := grpc_client.InitProductClient(os.Getenv("PRODUCT_SERVICE_HOST"), os.Getenv("PRODUCT_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Product Client: %v", err)
 	}
 
 	// Inventory Service
-	inventorySvc, err := grpc_clients.InitInventoryClient(os.Getenv("INVENTORY_SERVICE_HOST"), os.Getenv("INVENTORY_SERVICE_PORT"))
+	inventorySvc, err := grpc_client.InitInventoryClient(os.Getenv("INVENTORY_SERVICE_HOST"), os.Getenv("INVENTORY_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Inventory Client: %v", err)
 	}
 
 	// Cart Service
-	cartSvc, err := grpc_clients.InitCartClient(os.Getenv("CART_SERVICE_HOST"), os.Getenv("CART_SERVICE_PORT"))
+	cartSvc, err := grpc_client.InitCartClient(os.Getenv("CART_SERVICE_HOST"), os.Getenv("CART_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Cart Client: %v", err)
 	}
 
 	// Order Service
-	orderSvc, err := grpc_clients.InitOrderClient(os.Getenv("ORDER_SERVICE_HOST"), os.Getenv("ORDER_SERVICE_PORT"))
+	orderSvc, err := grpc_client.InitOrderClient(os.Getenv("ORDER_SERVICE_HOST"), os.Getenv("ORDER_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Order Client: %v", err)
 	}
 
 	// Payment Service
-	paymentSvc, err := grpc_clients.InitPaymentClient(os.Getenv("PAYMENT_SERVICE_HOST"), os.Getenv("PAYMENT_SERVICE_PORT"))
+	paymentSvc, err := grpc_client.InitPaymentClient(os.Getenv("PAYMENT_SERVICE_HOST"), os.Getenv("PAYMENT_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Payment Client: %v", err)
 	}
 
 	// Shipping Service
-	shippingSvc, err := grpc_clients.InitShippingClient(os.Getenv("SHIPPING_SERVICE_HOST"), os.Getenv("SHIPPING_SERVICE_PORT"))
+	shippingSvc, err := grpc_client.InitShippingClient(os.Getenv("SHIPPING_SERVICE_HOST"), os.Getenv("SHIPPING_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Shipping Client: %v", err)
 	}
 
 	// Notification Service
-	notifSvc, err := grpc_clients.InitNotificationClient(os.Getenv("NOTIFICATION_SERVICE_HOST"), os.Getenv("NOTIFICATION_SERVICE_PORT"))
+	notifSvc, err := grpc_client.InitNotificationClient(os.Getenv("NOTIFICATION_SERVICE_HOST"), os.Getenv("NOTIFICATION_SERVICE_PORT"))
 	if err != nil {
 		log.Fatalf("Failed to init Notification Client: %v", err)
 	}
 
 	// 3. Setup and Register Routes
 	log.Println("🛣️  Registering Routes...")
-	r := routes.SetupRouter(
+	r := route.SetupRouter(
 		authSvc.Client,
 		userSvc.Client,
 		productSvc.Client,

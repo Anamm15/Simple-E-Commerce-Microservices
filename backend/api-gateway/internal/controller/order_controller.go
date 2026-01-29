@@ -6,7 +6,7 @@ import (
 	"api-gateway/internal/dto"
 	"api-gateway/internal/helpers/constants"
 	orderpb "api-gateway/internal/pb/order"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func NewOrderController(orderService orderpb.OrderServiceClient) *OrderControlle
 func (c *OrderController) Checkout(ctx *gin.Context) {
 	var req dto.CheckoutRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -40,19 +40,19 @@ func (c *OrderController) Checkout(ctx *gin.Context) {
 
 	grpcRes, err := c.orderService.Checkout(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *OrderController) GetOrderHistory(ctx *gin.Context) {
 	var req dto.GetOrderHistoryRequestDTO
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -70,12 +70,12 @@ func (c *OrderController) GetOrderHistory(ctx *gin.Context) {
 
 	grpcRes, err := c.orderService.GetOrderHistory(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -90,19 +90,19 @@ func (c *OrderController) GetOrderDetail(ctx *gin.Context) {
 
 	grpcRes, err := c.orderService.GetOrderDetail(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *OrderController) GetAllOrders(ctx *gin.Context) {
 	var req dto.AdminOrderFilterRequestDTO
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -120,12 +120,12 @@ func (c *OrderController) GetAllOrders(ctx *gin.Context) {
 
 	grpcRes, err := c.orderService.GetAllOrders(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -134,7 +134,7 @@ func (c *OrderController) UpdateOrderStatus(ctx *gin.Context) {
 
 	var req dto.UpdateOrderStatusRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -142,7 +142,7 @@ func (c *OrderController) UpdateOrderStatus(ctx *gin.Context) {
 	// Validate status validity
 	statusVal, ok := orderpb.OrderStatus_value[req.NewStatus]
 	if !ok {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, "Invalid status", nil)
+		res := util.BuildResponseFailed(constants.MsgInvalidRequest, "Invalid status", nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -155,11 +155,11 @@ func (c *OrderController) UpdateOrderStatus(ctx *gin.Context) {
 
 	grpcRes, err := c.orderService.UpdateOrderStatus(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }

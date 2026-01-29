@@ -8,8 +8,9 @@ import "google/protobuf/empty.proto";
 
 service CartService {
   rpc GetCart(GetCartRequest) returns (CartDetails);
-  rpc AddItem(AddItemRequest) returns (CartDetails);
-  rpc RemoveItem(RemoveItemRequest) returns (CartDetails);
+  rpc AddItem(AddItemRequest) returns (CartItem);
+  rpc RemoveItem(RemoveItemRequest) returns (google.protobuf.Empty);
+  rpc UpdateItem(UpdateItemRequest) returns (google.protobuf.Empty);
   rpc ClearCart(ClearCartRequest) returns (google.protobuf.Empty);
 }
 
@@ -50,7 +51,14 @@ message RemoveItemRequest {
   string product_id = 2;
 }
 
-// 4. Clear Cart
+// 4. Update Quantity Item
+message UpdateItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+  int32 quantity = 3;
+}
+
+// 5. Clear Cart
 message ClearCartRequest {
   string user_id = 1;
 }

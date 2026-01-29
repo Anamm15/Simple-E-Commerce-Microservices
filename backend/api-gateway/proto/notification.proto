@@ -31,11 +31,12 @@ message GetNotificationsRequest {
   string user_id = 1;
   int32 page = 2;
   int32 limit = 3;
+  string sort = 4;
 }
 
 message NotificationList {
   repeated Notification notifications = 1;
-  int32 unread_count = 2;
+  int64 unread_count = 2;
 }
 
 // 2. Mark As Read

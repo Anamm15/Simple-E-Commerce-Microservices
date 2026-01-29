@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"api-gateway/internal/dto"
-	"api-gateway/internal/helpers/constants"
+	"api-gateway/internal/helper/constant"
 	cartpb "api-gateway/internal/pb/cart"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func NewCartController(cartClient cartpb.CartServiceClient) *CartController {
 func (c *CartController) AddItem(ctx *gin.Context) {
 	var req dto.AddCartItemRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -38,12 +38,12 @@ func (c *CartController) AddItem(ctx *gin.Context) {
 
 	grpcRes, err := c.CartClient.AddItem(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -55,12 +55,12 @@ func (c *CartController) GetCart(ctx *gin.Context) {
 
 	grpcRes, err := c.CartClient.GetCart(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -75,12 +75,12 @@ func (c *CartController) RemoveItem(ctx *gin.Context) {
 
 	grpcRes, err := c.CartClient.RemoveItem(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -92,11 +92,11 @@ func (c *CartController) ClearCart(ctx *gin.Context) {
 
 	_, err := c.CartClient.ClearCart(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }

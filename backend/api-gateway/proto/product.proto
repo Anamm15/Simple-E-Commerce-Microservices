@@ -24,23 +24,29 @@ service ProductService {
 // Representasi satu entity Product
 message Product {
   string id = 1;
-  string category_id = 2;
-  string category_name = 3; 
-  string name = 4;
-  string slug = 5;
-  string description = 6;
-  int64 price = 7;      
-  int32 weight_g = 8; 
-  string image_url = 9;
+  string name = 2;
+  string slug = 3;
+  string description =4;
+  int64 price = 5;      
+  int32 weight_g = 6;
+  string thumbnail = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
 }
 
 message ProductDetail {
   Product product = 1;
-  repeated Image additional_images = 2; 
-  repeated Review reviews = 3;        
-  float average_rating = 4;          
-  int32 total_reviews = 5;
+  repeated Image images = 2; 
+  repeated Category categories = 3;
+  repeated Review reviews = 4;        
+  float average_rating = 5;          
+  int32 total_reviews = 6;
 }
+
+message Category {
+  string id = 1;
+  string name = 2;
+} 
 
 message Image {
   string id = 1;
@@ -96,10 +102,6 @@ message CreateProductRequest {
   string description = 3;
   int64 price = 4;
   int32 weight_g = 5;
-  string image_url = 6;
-  
-  repeated string additional_image_urls = 7; 
-  
   int32 initial_stock = 8; 
 }
 
@@ -111,8 +113,6 @@ message UpdateProductRequest {
   string description = 4;
   int64 price = 5;
   int32 weight_g = 6;
-  string image_url = 7;
-  repeated string additional_image_urls = 8;
 }
 
 // 6. Delete Product

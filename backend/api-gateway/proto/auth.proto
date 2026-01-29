@@ -11,7 +11,6 @@ import "google/protobuf/empty.proto";
 service AuthService {
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
-  rpc ValidateToken(TokenRequest) returns (ValidateResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (TokenResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty);
   rpc ResetPassword(ResetPasswordRequest) returns (google.protobuf.Empty);
@@ -52,21 +51,11 @@ message LoginResponse {
   int64 expires_in = 3;
 }
 
-// 3. Validate Token
-message TokenRequest {
-  string access_token = 1;
-}
-
-message ValidateResponse {
-  bool is_valid = 1;
-  string user_id = 2;
-  string role = 3; 
-  string email = 4;
-}
-
-// 4. Refresh Token
+// 3. Refresh Token
 message RefreshTokenRequest {
-  string refresh_token = 1;
+  string user_id = 1;
+  string email = 2;
+  string role = 3;
 }
 
 message TokenResponse {
@@ -75,14 +64,14 @@ message TokenResponse {
   int64 expires_in = 3;
 }
 
-// 5. Change Password
+// 4. Change Password
 message ChangePasswordRequest {
   string user_id = 1; 
   string old_password = 2;
   string new_password = 3;
 }
 
-// 6. Reset Password
+// 5. Reset Password
 // Diasumsikan ini langkah akhir di mana user mengirim token reset + password baru
 message ResetPasswordRequest {
   string reset_token = 1; 

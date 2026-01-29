@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"api-gateway/internal/dto"
-	"api-gateway/internal/helpers/constants"
+	"api-gateway/internal/helper/constants"
 	paymentpb "api-gateway/internal/pb/payment"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func NewPaymentController(paymentClient paymentpb.PaymentServiceClient) *Payment
 func (c *PaymentController) WebhookPayment(ctx *gin.Context) {
 	var req dto.MidtransWebhookRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -47,11 +47,11 @@ func (c *PaymentController) WebhookPayment(ctx *gin.Context) {
 		// Webhook harus tetap return 200 OK ke Payment Gateway agar tidak di-retry terus menerus,
 		// meskipun internal error (log error di sisi server).
 		// Namun untuk development, return error asli dulu.
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constants.MsgSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }
