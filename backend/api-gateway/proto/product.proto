@@ -16,6 +16,9 @@ service ProductService {
   // Admin / Seller Operations
   rpc CreateProduct(CreateProductRequest) returns (ProductDetail);
   rpc UpdateProduct(UpdateProductRequest) returns (ProductDetail);
+  rpc AddImageProduct(AddImageProductRequest) returns (ImageProductResponse);
+  rpc UpdateThumbnailProduct(UpdateThumbnailProductRequest) returns (ImageProductResponse);
+  rpc DeleteImageProduct(DeleteImageProductRequest) returns (google.protobuf.Empty);
   rpc DeleteProduct(DeleteProductRequest) returns (google.protobuf.Empty);
 }
 
@@ -103,7 +106,7 @@ message ImageRequest {
 }
 
 message CreateProductRequest {
-  string category_id = 1;
+  repeated string categories = 1;
   string name = 2;
   string description = 3;
   int64 price = 4;
@@ -116,11 +119,28 @@ message CreateProductRequest {
 // 5. Update Product
 message UpdateProductRequest {
   string id = 1;
-  string category_id = 2;
+  repeated string categories = 2;
   string name = 3;
   string description = 4;
   int64 price = 5;
   int32 weight_g = 6;
+}
+
+message AddImageProductRequest {
+  repeated ImageRequest images = 1;
+}
+
+message UpdateThumbnailProductRequest {
+  string product_id = 1;
+  ImageRequest image = 2;
+}
+
+message DeleteImageProductRequest {
+  string image_id = 1;
+}
+
+message ImageProductResponse {
+  repeated Image images = 1; 
 }
 
 // 6. Delete Product

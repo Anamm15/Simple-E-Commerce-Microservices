@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"io"
 	"net/http"
 
 	"api-gateway/internal/dto"
 	"api-gateway/internal/helper/constant"
+	"api-gateway/internal/helper/mapper"
 	productpb "api-gateway/internal/pb/product"
 	"api-gateway/pkg/util"
 
@@ -96,29 +96,9 @@ func (pc *ProductController) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	var grpcImages []*productpb.ImageRequest
-
-	for _, fileHeader := range files {
-		file, err := fileHeader.Open()
-		if err != nil {
-			continue
-		}
-
-		bytes, err := io.ReadAll(file)
-		file.Close()
-		if err != nil {
-			continue
-		}
-
-		grpcImages = append(grpcImages, &productpb.ImageRequest{
-			Filename:    fileHeader.Filename,
-			ContentType: fileHeader.Header.Get("Content-Type"),
-			Data:        bytes,
-		})
-	}
-
+	grpcImages := mapper.MapFilesToProductImages(files)
 	grpcReq := &productpb.CreateProductRequest{
-		CategoryId:     req.CategoryID,
+		Categories:     req.Categories,
 		Name:           req.Name,
 		Description:    req.Description,
 		Price:          req.Price,
@@ -139,6 +119,92 @@ func (pc *ProductController) CreateProduct(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
+func (pc *ProductController) AddImages(c *gin.Context) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		res := util.BuildResponseFailed("invalid multipart form", err.Error(), nil)
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	files := form.File["images"] // [] *multipart.FileHeader
+	if len(files) == 0 {
+		res := util.BuildResponseFailed("images required", "image required minimal 1", nil)
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	grpcImages := mapper.MapFilesToProductImages(files)
+	grpcReq := &productpb.AddImageProductRequest{
+		Images: grpcImages,
+	}
+
+	grpcRes, err := pc.productClient.AddImageProduct(c, grpcReq)
+	if err != nil {
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
+	c.JSON(http.StatusOK, res)
+}
+
+func (pc *ProductController) UpdateThumbnailProduct(c *gin.Context) {
+	productID := c.Param("id")
+
+	c.Request.Body = http.MaxBytesReader(
+		c.Writer,
+		c.Request.Body,
+		5<<20,
+	)
+
+	fileHeader, err := c.FormFile("image")
+	if err != nil {
+		res := util.BuildResponseFailed(
+			"image required",
+			err.Error(),
+			nil,
+		)
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	grpcImages := mapper.MapFileToProductThumbnail(fileHeader)
+	grpcReq := &productpb.UpdateThumbnailProductRequest{
+		ProductId: productID,
+		Image:     grpcImages,
+	}
+
+	grpcRes, err := pc.productClient.UpdateThumbnailProduct(c, grpcReq)
+	if err != nil {
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
+	c.JSON(http.StatusOK, res)
+}
+
+func (pc *ProductController) RemoveImages(c *gin.Context) {
+	imageID := c.Param("id")
+
+	grpcReq := &productpb.DeleteImageProductRequest{
+		ImageId: imageID,
+	}
+
+	_, err := pc.productClient.DeleteImageProduct(c, grpcReq)
+	if err != nil {
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
+	c.JSON(http.StatusOK, res)
+}
+
 func (pc *ProductController) UpdateProduct(c *gin.Context) {
 	productID := c.Param("id")
 
@@ -151,7 +217,7 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 
 	grpcReq := &productpb.UpdateProductRequest{
 		Id:          productID,
-		CategoryId:  req.CategoryID,
+		Categories:  req.Categories,
 		Name:        req.Name,
 		Description: req.Description,
 		Price:       req.Price,

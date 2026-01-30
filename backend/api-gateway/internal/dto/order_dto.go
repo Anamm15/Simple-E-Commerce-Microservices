@@ -31,3 +31,8 @@ type UpdateOrderStatusRequestDTO struct {
 	NewStatus string `json:"new_status" binding:"required"`
 	Notes     string `json:"notes"`
 }
+
+type UpdateCartItemRequestDTO struct {
+	ProductID string `json:"product_id" binding:"required"`
+	Quantity  int32  `json:"quantity" binding:"required"`
+}

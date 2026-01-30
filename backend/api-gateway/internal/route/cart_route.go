@@ -12,6 +12,7 @@ func RegisterCartRoutes(router *gin.RouterGroup, cartController *controller.Cart
 	{
 		cartGroup.GET("", cartController.GetCart)
 		cartGroup.POST("/items", cartController.AddItem)
+		cartGroup.PATCH("/items/:product_id", cartController.UpdateItem)
 		cartGroup.DELETE("/items/:product_id", cartController.RemoveItem)
 		cartGroup.DELETE("/", cartController.ClearCart)
 	}

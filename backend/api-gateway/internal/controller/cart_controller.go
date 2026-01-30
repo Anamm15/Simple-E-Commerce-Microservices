@@ -64,6 +64,32 @@ func (c *CartController) GetCart(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+func (c *CartController) UpdateItem(ctx *gin.Context) {
+	var req dto.UpdateCartItemRequestDTO
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	userID := ctx.MustGet("user_id").(string)
+	grpcReq := &cartpb.UpdateItemRequest{
+		UserId:    userID,
+		ProductId: req.ProductID,
+		Quantity:  req.Quantity,
+	}
+
+	grpcRes, err := c.CartClient.UpdateItem(ctx, grpcReq)
+	if err != nil {
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
+		ctx.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
+	ctx.JSON(http.StatusOK, res)
+}
+
 func (c *CartController) RemoveItem(ctx *gin.Context) {
 	productID := ctx.Param("product_id")
 	userID := ctx.MustGet("user_id").(string)

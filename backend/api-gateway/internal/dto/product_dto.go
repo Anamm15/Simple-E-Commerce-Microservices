@@ -10,7 +10,7 @@ type SearchProductRequestDTO struct {
 }
 
 type CreateProductRequestDTO struct {
-	CategoryID          string   `json:"category_id" binding:"required"`
+	Categories          []string `json:"category" binding:"required"`
 	Name                string   `json:"name" binding:"required,min=3"`
 	Description         string   `json:"description" binding:"required"`
 	Price               int64    `json:"price" binding:"required,min=100"`
@@ -21,9 +21,9 @@ type CreateProductRequestDTO struct {
 }
 
 type UpdateProductRequestDTO struct {
-	CategoryID          string   `json:"category_id" binding:"required"`
-	Name                string   `json:"name" binding:"required"`
-	Description         string   `json:"description" binding:"required"`
+	Categories          []string `json:"category"`
+	Name                string   `json:"name"`
+	Description         string   `json:"description"`
 	Price               int64    `json:"price" binding:"required,min=100"`
 	WeightG             int32    `json:"weight_g" binding:"required,min=1"`
 	ImageURL            string   `json:"image_url" binding:"required,url"`

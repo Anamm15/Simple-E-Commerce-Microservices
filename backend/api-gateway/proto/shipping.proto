@@ -9,7 +9,8 @@ import "google/protobuf/timestamp.proto";
 service ShippingService {
   rpc CalculateCost(ShippingCostRequest) returns (ShippingCostResponse);
   rpc InputTrackingNumber(InputTrackingRequest) returns (ShipmentDetail);
-  rpc GetShipmentStatus(GetShipmentStatusRequest) returns (ShipmentDetail);
+  rpc GetShipment(GetShipmentRequest) returns (ShipmentDetail);
+  rpc Create(CreateShipmentRequest) returns (ShipmentDetail);
 }
 
 // --- Message Definitions ---
@@ -49,7 +50,16 @@ message InputTrackingRequest {
   string courier_code = 3;
 }
 
-// 3. Get Status
-message GetShipmentStatusRequest {
+// 3. Get Shipment
+message GetShipmentRequest {
   string order_id = 1;
+}
+
+// 4. Create Shipment
+message CreateShipmentRequest {
+  string order_id = 1;
+  string courier_code = 2;
+  string service_code = 3;
+  string tracking_number = 4;
+  int64 shipping_cost = 6;
 }
