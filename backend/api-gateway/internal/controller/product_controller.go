@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"io"
 	"net/http"
 
 	"api-gateway/internal/dto"
@@ -68,22 +69,63 @@ func (pc *ProductController) GetProductDetail(c *gin.Context) {
 }
 
 func (pc *ProductController) CreateProduct(c *gin.Context) {
+	c.Request.Body = http.MaxBytesReader(
+		c.Writer,
+		c.Request.Body,
+		20<<20,
+	)
+
 	var req dto.CreateProductRequestDTO
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 
+	form, err := c.MultipartForm()
+	if err != nil {
+		res := util.BuildResponseFailed("invalid multipart form", err.Error(), nil)
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	files := form.File["images"] // [] *multipart.FileHeader
+	if len(files) == 0 {
+		res := util.BuildResponseFailed("images required", "image required minimal 1", nil)
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	var grpcImages []*productpb.ImageRequest
+
+	for _, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			continue
+		}
+
+		bytes, err := io.ReadAll(file)
+		file.Close()
+		if err != nil {
+			continue
+		}
+
+		grpcImages = append(grpcImages, &productpb.ImageRequest{
+			Filename:    fileHeader.Filename,
+			ContentType: fileHeader.Header.Get("Content-Type"),
+			Data:        bytes,
+		})
+	}
+
 	grpcReq := &productpb.CreateProductRequest{
-		CategoryId:          req.CategoryID,
-		Name:                req.Name,
-		Description:         req.Description,
-		Price:               req.Price,
-		WeightG:             req.WeightG,
-		ImageUrl:            req.ImageURL,
-		AdditionalImageUrls: req.AdditionalImageURLs,
-		InitialStock:        req.InitialStock,
+		CategoryId:     req.CategoryID,
+		Name:           req.Name,
+		Description:    req.Description,
+		Price:          req.Price,
+		WeightG:        req.WeightG,
+		InitialStock:   req.InitialStock,
+		Thumbnail:      grpcImages[0],
+		AdditionalImgs: grpcImages[1:],
 	}
 
 	grpcRes, err := pc.productClient.CreateProduct(c, grpcReq)
@@ -108,14 +150,12 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 	}
 
 	grpcReq := &productpb.UpdateProductRequest{
-		Id:                  productID,
-		CategoryId:          req.CategoryID,
-		Name:                req.Name,
-		Description:         req.Description,
-		Price:               req.Price,
-		WeightG:             req.WeightG,
-		ImageUrl:            req.ImageURL,
-		AdditionalImageUrls: req.AdditionalImageURLs,
+		Id:          productID,
+		CategoryId:  req.CategoryID,
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		WeightG:     req.WeightG,
 	}
 
 	grpcRes, err := pc.productClient.UpdateProduct(c, grpcReq)

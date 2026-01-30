@@ -29,7 +29,7 @@ func (nc *NotificationController) GetNotifications(ctx *gin.Context) {
 		return
 	}
 
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	grpcReq := &notificationpb.GetNotificationsRequest{
 		UserId: userID,
 		Page:   req.Page,
@@ -49,7 +49,7 @@ func (nc *NotificationController) GetNotifications(ctx *gin.Context) {
 
 func (nc *NotificationController) MarkAsRead(ctx *gin.Context) {
 	notificationID := ctx.Param("id")
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 
 	grpcReq := &notificationpb.MarkAsReadRequest{
 		NotificationId: notificationID,

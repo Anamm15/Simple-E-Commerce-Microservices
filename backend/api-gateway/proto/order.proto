@@ -56,7 +56,7 @@ message OrderItem {
 message OrderDetail {
   string id = 1;
   string user_id = 2;
-  string status = 3;
+  OrderStatus status = 3;
   int64 total_amount = 4;       
   int64 shipping_cost = 5;
   AddressSnapshot shipping_address = 6;
@@ -75,7 +75,7 @@ message GetOrderHistoryRequest {
   string user_id = 1;
   int32 page = 2;
   int32 limit = 3;
-  string status_filter = 4;
+  OrderStatus status_filter = 4;
   string sort = 5;
 }
 
@@ -113,7 +113,7 @@ message AdminFilterRequest {
   int32 page = 1;
   int32 limit = 2;
   string user_id = 3;       
-  string status = 4;     
+  OrderStatus status = 4;     
   string date_start = 5;      
   string date_end = 6;
 }
@@ -121,12 +121,12 @@ message AdminFilterRequest {
 // 5. Update Status
 message UpdateStatusRequest {
   string order_id = 1;
-  string new_status = 2;
+  OrderStatus new_status = 2;
   string notes = 3; // Reason for cancellation
 }
 
 message OrderUpdateResponse {
   bool success = 1;
   string message = 2;
-  string current_status = 3;
+  OrderStatus current_status = 3;
 }

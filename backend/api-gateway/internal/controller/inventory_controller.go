@@ -30,9 +30,8 @@ func (c *InventoryController) UpdateStock(ctx *gin.Context) {
 	}
 
 	grpcReq := &inventorypb.UpdateStockRequest{
-		ProductId:  req.ProductID,
-		UpdateType: req.UpdateType,
-		Quantity:   req.Quantity,
+		ProductId: req.ProductID,
+		Quantity:  req.Quantity,
 	}
 
 	grpcRes, err := c.InventoryClient.UpdateStock(ctx, grpcReq)

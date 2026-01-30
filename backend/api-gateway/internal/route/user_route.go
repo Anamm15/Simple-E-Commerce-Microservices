@@ -2,11 +2,13 @@ package route
 
 import (
 	"api-gateway/internal/controller"
+	"api-gateway/internal/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterUserRoutes(router *gin.RouterGroup, userController *controller.UserController) {
-	userGroup := router.Group("/users")
+	userGroup := router.Group("/users", middleware.Authenticate())
 	{
 		userGroup.GET("/profile", userController.GetUserProfile)
 		userGroup.PUT("/profile", userController.UpdateUserProfile)

@@ -175,12 +175,12 @@ type OrderItem struct {
 	ProductId string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity  int32                  `protobuf:"varint,3,opt,name=quantity,proto3" json:"quantity,omitempty"`
 	// Snapshot Data
-	ProductNameSnapshot   string `protobuf:"bytes,4,opt,name=product_name_snapshot,json=productNameSnapshot,proto3" json:"product_name_snapshot,omitempty"`
-	ProductImageSnapshot  string `protobuf:"bytes,5,opt,name=product_image_snapshot,json=productImageSnapshot,proto3" json:"product_image_snapshot,omitempty"`
-	ProductPriceSnapshot  int64  `protobuf:"varint,6,opt,name=product_price_snapshot,json=productPriceSnapshot,proto3" json:"product_price_snapshot,omitempty"`
-	ProductWeightSnapshot int32  `protobuf:"varint,7,opt,name=product_weight_snapshot,json=productWeightSnapshot,proto3" json:"product_weight_snapshot,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	ProductNameSnapshot      string `protobuf:"bytes,4,opt,name=product_name_snapshot,json=productNameSnapshot,proto3" json:"product_name_snapshot,omitempty"`
+	ProductThumbnailSnapshot string `protobuf:"bytes,5,opt,name=product_thumbnail_snapshot,json=productThumbnailSnapshot,proto3" json:"product_thumbnail_snapshot,omitempty"`
+	ProductPriceSnapshot     int64  `protobuf:"varint,6,opt,name=product_price_snapshot,json=productPriceSnapshot,proto3" json:"product_price_snapshot,omitempty"`
+	ProductWeightSnapshot    int32  `protobuf:"varint,7,opt,name=product_weight_snapshot,json=productWeightSnapshot,proto3" json:"product_weight_snapshot,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *OrderItem) Reset() {
@@ -241,9 +241,9 @@ func (x *OrderItem) GetProductNameSnapshot() string {
 	return ""
 }
 
-func (x *OrderItem) GetProductImageSnapshot() string {
+func (x *OrderItem) GetProductThumbnailSnapshot() string {
 	if x != nil {
-		return x.ProductImageSnapshot
+		return x.ProductThumbnailSnapshot
 	}
 	return ""
 }
@@ -394,7 +394,8 @@ type GetOrderHistoryRequest struct {
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	StatusFilter  OrderStatus            `protobuf:"varint,4,opt,name=status_filter,json=statusFilter,proto3,enum=order.OrderStatus" json:"status_filter,omitempty"` // Opsional: filter tab "Belum Bayar", "Selesai"
+	StatusFilter  OrderStatus            `protobuf:"varint,4,opt,name=status_filter,json=statusFilter,proto3,enum=order.OrderStatus" json:"status_filter,omitempty"`
+	Sort          string                 `protobuf:"bytes,5,opt,name=sort,proto3" json:"sort,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -457,10 +458,17 @@ func (x *GetOrderHistoryRequest) GetStatusFilter() OrderStatus {
 	return OrderStatus_PENDING
 }
 
+func (x *GetOrderHistoryRequest) GetSort() string {
+	if x != nil {
+		return x.Sort
+	}
+	return ""
+}
+
 type OrderList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Orders        []*OrderDetail         `protobuf:"bytes,1,rep,name=orders,proto3" json:"orders,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	TotalCount    int64                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	CurrentPage   int32                  `protobuf:"varint,3,opt,name=current_page,json=currentPage,proto3" json:"current_page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -503,7 +511,7 @@ func (x *OrderList) GetOrders() []*OrderDetail {
 	return nil
 }
 
-func (x *OrderList) GetTotalCount() int32 {
+func (x *OrderList) GetTotalCount() int64 {
 	if x != nil {
 		return x.TotalCount
 	}
@@ -574,10 +582,10 @@ func (x *GetOrderDetailRequest) GetUserId() string {
 type CheckoutRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AddressId     string                 `protobuf:"bytes,2,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
+	Address       string                 `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	CourierCode   string                 `protobuf:"bytes,3,opt,name=courier_code,json=courierCode,proto3" json:"courier_code,omitempty"`
 	ServiceCode   string                 `protobuf:"bytes,4,opt,name=service_code,json=serviceCode,proto3" json:"service_code,omitempty"`
-	PaymentMethod string                 `protobuf:"bytes,5,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"`
+	ProductIds    []string               `protobuf:"bytes,5,rep,name=product_ids,json=productIds,proto3" json:"product_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -619,9 +627,9 @@ func (x *CheckoutRequest) GetUserId() string {
 	return ""
 }
 
-func (x *CheckoutRequest) GetAddressId() string {
+func (x *CheckoutRequest) GetAddress() string {
 	if x != nil {
-		return x.AddressId
+		return x.Address
 	}
 	return ""
 }
@@ -640,11 +648,11 @@ func (x *CheckoutRequest) GetServiceCode() string {
 	return ""
 }
 
-func (x *CheckoutRequest) GetPaymentMethod() string {
+func (x *CheckoutRequest) GetProductIds() []string {
 	if x != nil {
-		return x.PaymentMethod
+		return x.ProductIds
 	}
-	return ""
+	return nil
 }
 
 type CheckoutResponse struct {
@@ -940,14 +948,14 @@ const file_proto_order_proto_rawDesc = "" +
 	"\bprovince\x18\x03 \x01(\tR\bprovince\x12\x19\n" +
 	"\bzip_code\x18\x04 \x01(\tR\azipCode\x12#\n" +
 	"\rreceiver_name\x18\x05 \x01(\tR\freceiverName\x12%\n" +
-	"\x0ereceiver_phone\x18\x06 \x01(\tR\rreceiverPhone\"\xae\x02\n" +
+	"\x0ereceiver_phone\x18\x06 \x01(\tR\rreceiverPhone\"\xb6\x02\n" +
 	"\tOrderItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x02 \x01(\tR\tproductId\x12\x1a\n" +
 	"\bquantity\x18\x03 \x01(\x05R\bquantity\x122\n" +
-	"\x15product_name_snapshot\x18\x04 \x01(\tR\x13productNameSnapshot\x124\n" +
-	"\x16product_image_snapshot\x18\x05 \x01(\tR\x14productImageSnapshot\x124\n" +
+	"\x15product_name_snapshot\x18\x04 \x01(\tR\x13productNameSnapshot\x12<\n" +
+	"\x1aproduct_thumbnail_snapshot\x18\x05 \x01(\tR\x18productThumbnailSnapshot\x124\n" +
 	"\x16product_price_snapshot\x18\x06 \x01(\x03R\x14productPriceSnapshot\x126\n" +
 	"\x17product_weight_snapshot\x18\a \x01(\x05R\x15productWeightSnapshot\"\xcf\x03\n" +
 	"\vOrderDetail\x12\x0e\n" +
@@ -963,27 +971,28 @@ const file_proto_order_proto_rawDesc = "" +
 	"\x05items\x18\n" +
 	" \x03(\v2\x10.order.OrderItemR\x05items\x129\n" +
 	"\n" +
-	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x94\x01\n" +
+	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xa8\x01\n" +
 	"\x16GetOrderHistoryRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\x127\n" +
-	"\rstatus_filter\x18\x04 \x01(\x0e2\x12.order.OrderStatusR\fstatusFilter\"{\n" +
+	"\rstatus_filter\x18\x04 \x01(\x0e2\x12.order.OrderStatusR\fstatusFilter\x12\x12\n" +
+	"\x04sort\x18\x05 \x01(\tR\x04sort\"{\n" +
 	"\tOrderList\x12*\n" +
 	"\x06orders\x18\x01 \x03(\v2\x12.order.OrderDetailR\x06orders\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
+	"\vtotal_count\x18\x02 \x01(\x03R\n" +
 	"totalCount\x12!\n" +
 	"\fcurrent_page\x18\x03 \x01(\x05R\vcurrentPage\"K\n" +
 	"\x15GetOrderDetailRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\"\xb6\x01\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"\xab\x01\n" +
 	"\x0fCheckoutRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
-	"\n" +
-	"address_id\x18\x02 \x01(\tR\taddressId\x12!\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x18\n" +
+	"\aaddress\x18\x02 \x01(\tR\aaddress\x12!\n" +
 	"\fcourier_code\x18\x03 \x01(\tR\vcourierCode\x12!\n" +
-	"\fservice_code\x18\x04 \x01(\tR\vserviceCode\x12%\n" +
-	"\x0epayment_method\x18\x05 \x01(\tR\rpaymentMethod\"\xd3\x01\n" +
+	"\fservice_code\x18\x04 \x01(\tR\vserviceCode\x12\x1f\n" +
+	"\vproduct_ids\x18\x05 \x03(\tR\n" +
+	"productIds\"\xd3\x01\n" +
 	"\x10CheckoutResponse\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12\x1f\n" +
 	"\vpayment_url\x18\x02 \x01(\tR\n" +

@@ -1,10 +1,11 @@
 package dto
 
 type CheckoutRequestDTO struct {
-	AddressID     string `json:"address_id" binding:"required"`
-	CourierCode   string `json:"courier_code" binding:"required"`
-	ServiceCode   string `json:"service_code" binding:"required"`
-	PaymentMethod string `json:"payment_method" binding:"required"`
+	Address       string   `json:"address_id" binding:"required"`
+	CourierCode   string   `json:"courier_code" binding:"required"`
+	ServiceCode   string   `json:"service_code" binding:"required"`
+	PaymentMethod string   `json:"payment_method" binding:"required"`
+	ProdcutIDs    []string `json:"product_ids" binding:"required"`
 }
 
 // 2. Get Order History (User)

@@ -29,7 +29,7 @@ func (c *CartController) AddItem(ctx *gin.Context) {
 		return
 	}
 
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	grpcReq := &cartpb.AddItemRequest{
 		UserId:    userID,
 		ProductId: req.ProductID,
@@ -48,7 +48,7 @@ func (c *CartController) AddItem(ctx *gin.Context) {
 }
 
 func (c *CartController) GetCart(ctx *gin.Context) {
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	grpcReq := &cartpb.GetCartRequest{
 		UserId: userID,
 	}
@@ -66,7 +66,7 @@ func (c *CartController) GetCart(ctx *gin.Context) {
 
 func (c *CartController) RemoveItem(ctx *gin.Context) {
 	productID := ctx.Param("product_id")
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 
 	grpcReq := &cartpb.RemoveItemRequest{
 		UserId:    userID,
@@ -85,7 +85,7 @@ func (c *CartController) RemoveItem(ctx *gin.Context) {
 }
 
 func (c *CartController) ClearCart(ctx *gin.Context) {
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	grpcReq := &cartpb.ClearCartRequest{
 		UserId: userID,
 	}

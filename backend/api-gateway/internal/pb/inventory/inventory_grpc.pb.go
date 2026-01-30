@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	InventoryService_CreateStock_FullMethodName  = "/inventory.InventoryService/CreateStock"
 	InventoryService_CheckStock_FullMethodName   = "/inventory.InventoryService/CheckStock"
 	InventoryService_ReserveStock_FullMethodName = "/inventory.InventoryService/ReserveStock"
 	InventoryService_UpdateStock_FullMethodName  = "/inventory.InventoryService/UpdateStock"
@@ -30,6 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InventoryServiceClient interface {
+	CreateStock(ctx context.Context, in *CreateStockRequest, opts ...grpc.CallOption) (*StockCount, error)
 	CheckStock(ctx context.Context, in *CheckStockRequest, opts ...grpc.CallOption) (*StockCount, error)
 	ReserveStock(ctx context.Context, in *ReserveStockRequest, opts ...grpc.CallOption) (*ReserveStockResponse, error)
 	UpdateStock(ctx context.Context, in *UpdateStockRequest, opts ...grpc.CallOption) (*StockCount, error)
@@ -42,6 +44,16 @@ type inventoryServiceClient struct {
 
 func NewInventoryServiceClient(cc grpc.ClientConnInterface) InventoryServiceClient {
 	return &inventoryServiceClient{cc}
+}
+
+func (c *inventoryServiceClient) CreateStock(ctx context.Context, in *CreateStockRequest, opts ...grpc.CallOption) (*StockCount, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StockCount)
+	err := c.cc.Invoke(ctx, InventoryService_CreateStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *inventoryServiceClient) CheckStock(ctx context.Context, in *CheckStockRequest, opts ...grpc.CallOption) (*StockCount, error) {
@@ -88,6 +100,7 @@ func (c *inventoryServiceClient) ReleaseStock(ctx context.Context, in *ReleaseSt
 // All implementations must embed UnimplementedInventoryServiceServer
 // for forward compatibility.
 type InventoryServiceServer interface {
+	CreateStock(context.Context, *CreateStockRequest) (*StockCount, error)
 	CheckStock(context.Context, *CheckStockRequest) (*StockCount, error)
 	ReserveStock(context.Context, *ReserveStockRequest) (*ReserveStockResponse, error)
 	UpdateStock(context.Context, *UpdateStockRequest) (*StockCount, error)
@@ -102,6 +115,9 @@ type InventoryServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedInventoryServiceServer struct{}
 
+func (UnimplementedInventoryServiceServer) CreateStock(context.Context, *CreateStockRequest) (*StockCount, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateStock not implemented")
+}
 func (UnimplementedInventoryServiceServer) CheckStock(context.Context, *CheckStockRequest) (*StockCount, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckStock not implemented")
 }
@@ -133,6 +149,24 @@ func RegisterInventoryServiceServer(s grpc.ServiceRegistrar, srv InventoryServic
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&InventoryService_ServiceDesc, srv)
+}
+
+func _InventoryService_CreateStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).CreateStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_CreateStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).CreateStock(ctx, req.(*CreateStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _InventoryService_CheckStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -214,6 +248,10 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "inventory.InventoryService",
 	HandlerType: (*InventoryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateStock",
+			Handler:    _InventoryService_CreateStock_Handler,
+		},
 		{
 			MethodName: "CheckStock",
 			Handler:    _InventoryService_CheckStock_Handler,

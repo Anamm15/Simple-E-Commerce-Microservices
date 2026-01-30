@@ -15,7 +15,7 @@ type CreateProductRequestDTO struct {
 	Description         string   `json:"description" binding:"required"`
 	Price               int64    `json:"price" binding:"required,min=100"`
 	WeightG             int32    `json:"weight_g" binding:"required,min=1"`
-	ImageURL            string   `json:"image_url" binding:"required,url"`
+	Thumbnail           string   `json:"image_url" binding:"required,url"`
 	AdditionalImageURLs []string `json:"additional_image_urls"`
 	InitialStock        int32    `json:"initial_stock" binding:"required,min=0"`
 }

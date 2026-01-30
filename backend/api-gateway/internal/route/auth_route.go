@@ -2,6 +2,7 @@ package route
 
 import (
 	"api-gateway/internal/controller"
+	"api-gateway/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,6 +15,9 @@ func RegisterAuthRoutes(router *gin.RouterGroup, authController *controller.Auth
 		authGroup.POST("/logout", authController.Logout)
 		authGroup.POST("/refresh", authController.RefreshToken)
 		authGroup.PATCH("/reset-password", authController.ResetPassword)
-		authGroup.PATCH("/change-password", authController.ChangePassword)
+		protected := authGroup.Group("", middleware.Authenticate())
+		{
+			protected.PATCH("/change-password", authController.ChangePassword)
+		}
 	}
 }

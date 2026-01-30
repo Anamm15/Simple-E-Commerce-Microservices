@@ -117,15 +117,14 @@ func (x *PaymentDetail) GetCreatedAt() *timestamppb.Timestamp {
 
 // 1. Create Payment
 type CreatePaymentRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	UserId        string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	CustomerName  string                 `protobuf:"bytes,4,opt,name=customer_name,json=customerName,proto3" json:"customer_name,omitempty"`
-	CustomerEmail string                 `protobuf:"bytes,5,opt,name=customer_email,json=customerEmail,proto3" json:"customer_email,omitempty"`
-	Items         []*PaymentItem         `protobuf:"bytes,6,rep,name=items,proto3" json:"items,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	OrderId             string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Amount              int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
+	CustomerName        string                 `protobuf:"bytes,3,opt,name=customer_name,json=customerName,proto3" json:"customer_name,omitempty"`
+	CustomerEmail       string                 `protobuf:"bytes,4,opt,name=customer_email,json=customerEmail,proto3" json:"customer_email,omitempty"`
+	CustomerPhoneNumber string                 `protobuf:"bytes,5,opt,name=customer_phone_number,json=customerPhoneNumber,proto3" json:"customer_phone_number,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *CreatePaymentRequest) Reset() {
@@ -172,13 +171,6 @@ func (x *CreatePaymentRequest) GetAmount() int64 {
 	return 0
 }
 
-func (x *CreatePaymentRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
-}
-
 func (x *CreatePaymentRequest) GetCustomerName() string {
 	if x != nil {
 		return x.CustomerName
@@ -193,11 +185,11 @@ func (x *CreatePaymentRequest) GetCustomerEmail() string {
 	return ""
 }
 
-func (x *CreatePaymentRequest) GetItems() []*PaymentItem {
+func (x *CreatePaymentRequest) GetCustomerPhoneNumber() string {
 	if x != nil {
-		return x.Items
+		return x.CustomerPhoneNumber
 	}
-	return nil
+	return ""
 }
 
 type PaymentItem struct {
@@ -271,7 +263,7 @@ func (x *PaymentItem) GetQuantity() int32 {
 type PaymentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PaymentId     string                 `protobuf:"bytes,1,opt,name=payment_id,json=paymentId,proto3" json:"payment_id,omitempty"`
-	SnapToken     string                 `protobuf:"bytes,2,opt,name=snap_token,json=snapToken,proto3" json:"snap_token,omitempty"`
+	Token         string                 `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	RedirectUrl   string                 `protobuf:"bytes,3,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -314,9 +306,9 @@ func (x *PaymentResponse) GetPaymentId() string {
 	return ""
 }
 
-func (x *PaymentResponse) GetSnapToken() string {
+func (x *PaymentResponse) GetToken() string {
 	if x != nil {
-		return x.SnapToken
+		return x.Token
 	}
 	return ""
 }
@@ -336,7 +328,6 @@ type WebhookRequest struct {
 	FraudStatus       string                 `protobuf:"bytes,3,opt,name=fraud_status,json=fraudStatus,proto3" json:"fraud_status,omitempty"`
 	PaymentType       string                 `protobuf:"bytes,4,opt,name=payment_type,json=paymentType,proto3" json:"payment_type,omitempty"`
 	TransactionId     string                 `protobuf:"bytes,5,opt,name=transaction_id,json=transactionId,proto3" json:"transaction_id,omitempty"`
-	RawJsonPayload    string                 `protobuf:"bytes,6,opt,name=raw_json_payload,json=rawJsonPayload,proto3" json:"raw_json_payload,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -406,13 +397,6 @@ func (x *WebhookRequest) GetTransactionId() string {
 	return ""
 }
 
-func (x *WebhookRequest) GetRawJsonPayload() string {
-	if x != nil {
-		return x.RawJsonPayload
-	}
-	return ""
-}
-
 // 3. Check Status
 type CheckStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -471,32 +455,29 @@ const file_proto_payment_proto_rawDesc = "" +
 	"\x0epayment_method\x18\x05 \x01(\tR\rpaymentMethod\x12\x16\n" +
 	"\x06status\x18\x06 \x01(\tR\x06status\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xda\x01\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc9\x01\n" +
 	"\x14CreatePaymentRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x03R\x06amount\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\tR\x06userId\x12#\n" +
-	"\rcustomer_name\x18\x04 \x01(\tR\fcustomerName\x12%\n" +
-	"\x0ecustomer_email\x18\x05 \x01(\tR\rcustomerEmail\x12*\n" +
-	"\x05items\x18\x06 \x03(\v2\x14.payment.PaymentItemR\x05items\"c\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\x12#\n" +
+	"\rcustomer_name\x18\x03 \x01(\tR\fcustomerName\x12%\n" +
+	"\x0ecustomer_email\x18\x04 \x01(\tR\rcustomerEmail\x122\n" +
+	"\x15customer_phone_number\x18\x05 \x01(\tR\x13customerPhoneNumber\"c\n" +
 	"\vPaymentItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x03R\x05price\x12\x1a\n" +
-	"\bquantity\x18\x04 \x01(\x05R\bquantity\"r\n" +
+	"\bquantity\x18\x04 \x01(\x05R\bquantity\"i\n" +
 	"\x0fPaymentResponse\x12\x1d\n" +
 	"\n" +
-	"payment_id\x18\x01 \x01(\tR\tpaymentId\x12\x1d\n" +
-	"\n" +
-	"snap_token\x18\x02 \x01(\tR\tsnapToken\x12!\n" +
-	"\fredirect_url\x18\x03 \x01(\tR\vredirectUrl\"\xf1\x01\n" +
+	"payment_id\x18\x01 \x01(\tR\tpaymentId\x12\x14\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\x12!\n" +
+	"\fredirect_url\x18\x03 \x01(\tR\vredirectUrl\"\xc7\x01\n" +
 	"\x0eWebhookRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12-\n" +
 	"\x12transaction_status\x18\x02 \x01(\tR\x11transactionStatus\x12!\n" +
 	"\ffraud_status\x18\x03 \x01(\tR\vfraudStatus\x12!\n" +
 	"\fpayment_type\x18\x04 \x01(\tR\vpaymentType\x12%\n" +
-	"\x0etransaction_id\x18\x05 \x01(\tR\rtransactionId\x12(\n" +
-	"\x10raw_json_payload\x18\x06 \x01(\tR\x0erawJsonPayload\"/\n" +
+	"\x0etransaction_id\x18\x05 \x01(\tR\rtransactionId\"/\n" +
 	"\x12CheckStatusRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId2\x9d\x01\n" +
 	"\x0ePaymentService\x12H\n" +
@@ -528,16 +509,15 @@ var file_proto_payment_proto_goTypes = []any{
 }
 var file_proto_payment_proto_depIdxs = []int32{
 	6, // 0: payment.PaymentDetail.created_at:type_name -> google.protobuf.Timestamp
-	2, // 1: payment.CreatePaymentRequest.items:type_name -> payment.PaymentItem
-	1, // 2: payment.PaymentService.CreatePayment:input_type -> payment.CreatePaymentRequest
-	4, // 3: payment.PaymentService.WebhookPayment:input_type -> payment.WebhookRequest
-	3, // 4: payment.PaymentService.CreatePayment:output_type -> payment.PaymentResponse
-	7, // 5: payment.PaymentService.WebhookPayment:output_type -> google.protobuf.Empty
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 1: payment.PaymentService.CreatePayment:input_type -> payment.CreatePaymentRequest
+	4, // 2: payment.PaymentService.WebhookPayment:input_type -> payment.WebhookRequest
+	3, // 3: payment.PaymentService.CreatePayment:output_type -> payment.PaymentResponse
+	7, // 4: payment.PaymentService.WebhookPayment:output_type -> google.protobuf.Empty
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_proto_init() }

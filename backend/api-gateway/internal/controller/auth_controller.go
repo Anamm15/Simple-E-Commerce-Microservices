@@ -120,7 +120,7 @@ func (c *AuthController) ChangePassword(ctx *gin.Context) {
 		return
 	}
 
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	if userID == "" {
 		res := util.BuildResponseFailed(constant.MsgUnauthorized, "User ID not found in context", nil)
 		ctx.JSON(http.StatusUnauthorized, res)
