@@ -45,6 +45,7 @@ func ConnectDatabase() *gorm.DB {
 
 	if err := db.AutoMigrate(
 		&model.Account{},
+		&model.RefreshToken{},
 	); err != nil {
 		log.Fatal("Failed to migrate database: ", err)
 	}

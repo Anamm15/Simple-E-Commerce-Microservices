@@ -35,7 +35,8 @@ func main() {
 
 	// 🔹 Initializing repository, service, and controller
 	accountRepository := repository.NewAccountRepository(db)
-	authService := service.NewAuthService(accountRepository)
+	refreshTokenRepository := repository.NewRefreshTokenRepository(db)
+	authService := service.NewAuthService(accountRepository, refreshTokenRepository)
 	authController := controller.NewAuthController(authService)
 
 	// 🔹 Setup gRPC server

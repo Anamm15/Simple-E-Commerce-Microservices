@@ -53,9 +53,7 @@ message LoginResponse {
 
 // 3. Refresh Token
 message RefreshTokenRequest {
-  string user_id = 1;
-  string email = 2;
-  string role = 3;
+  string refresh_token = 1;
 }
 
 message TokenResponse {

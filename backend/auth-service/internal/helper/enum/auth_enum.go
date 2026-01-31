@@ -1,10 +1,10 @@
-package helper
+package enum
 
 type (
 	AccountRole string
 )
 
 const (
-	RoleUser    AccountRole = "user"
-	RolePatient AccountRole = "admin"
+	RoleUser    AccountRole = "USER"
+	RolePatient AccountRole = "ADMIN"
 )

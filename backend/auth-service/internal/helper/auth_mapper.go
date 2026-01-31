@@ -10,7 +10,6 @@ func MapAccountToAccountResponseDTO(account *model.Account) *dto.AccountResponse
 		ID:       account.ID,
 		Email:    account.Email,
 		Username: account.Username,
-		Role:     string(account.Role),
 		Created:  account.CreatedAt,
 	}
 }

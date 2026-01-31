@@ -27,18 +27,6 @@ type LoginRequestDTO struct {
 	Password string
 }
 
-type LoginResponseDTO struct {
-	AccessToken  string
-	RefreshToken string
-	ExpiresIn    int64
-}
-
-type RefreshTokenRequestDTO struct {
-	UserID string
-	Email  string
-	Role   string
-}
-
 type ChangePasswordRequestDTO struct {
 	UserID      string
 	OldPassword string
@@ -48,12 +36,6 @@ type ChangePasswordRequestDTO struct {
 type ResetPasswordRequestDTO struct {
 	ResetToken  string
 	NewPassword string
-}
-
-type TokenResponseDTO struct {
-	AccessToken  string
-	RefreshToken string
-	ExpiresIn    int64
 }
 
 type Claims struct {

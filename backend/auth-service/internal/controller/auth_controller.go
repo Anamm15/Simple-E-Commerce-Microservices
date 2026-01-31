@@ -49,30 +49,16 @@ func (c *authController) Login(ctx context.Context, req *authpb.LoginRequest) (*
 		return nil, status.Errorf(codes.Unauthenticated, "invalid credentials: %v", err)
 	}
 
-	return &authpb.LoginResponse{
-		AccessToken:  result.AccessToken,
-		RefreshToken: result.RefreshToken,
-		ExpiresIn:    result.ExpiresIn,
-	}, nil
+	return result, nil
 }
 
 func (c *authController) RefreshToken(ctx context.Context, req *authpb.RefreshTokenRequest) (*authpb.TokenResponse, error) {
-	input := dto.RefreshTokenRequestDTO{
-		UserID: req.UserId,
-		Email:  req.Email,
-		Role:   req.Role,
-	}
-
-	result, err := c.service.RefreshToken(ctx, input)
+	result, err := c.service.RefreshToken(ctx, req.RefreshToken)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "failed to refresh token: %v", err)
 	}
 
-	return &authpb.TokenResponse{
-		AccessToken:  result.AccessToken,
-		RefreshToken: result.RefreshToken,
-		ExpiresIn:    result.ExpiresIn,
-	}, nil
+	return result, nil
 }
 
 func (c *authController) ChangePassword(ctx context.Context, req *authpb.ChangePasswordRequest) (*emptypb.Empty, error) {
