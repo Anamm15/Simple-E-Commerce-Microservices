@@ -16,15 +16,20 @@ type UpdateStockRequestDTO struct {
 	Quantity  int32
 }
 
-type ReserveAndReleaseStockRequestDTO struct {
+type ReserveStockRequestDTO struct {
 	OrderID string
 	Items   []*inventorypb.StockItem
+}
+
+type ReleaseStockRequestDTO struct {
+	OrderID string
+	Action  string
 }
 
 func (dto *CreateStockRequestDTO) ToModel() *model.Inventory {
 	productID, _ := util.StringToUUID(dto.ProductID)
 	return &model.Inventory{
-		ProductID: productID,
-		Stock:     dto.Quantity,
+		ProductID:  productID,
+		TotalStock: dto.Quantity,
 	}
 }

@@ -8,6 +8,6 @@ import (
 func MapToInventoryStockCount(inventory *model.Inventory) *inventorypb.StockCount {
 	return &inventorypb.StockCount{
 		ProductId:  inventory.ProductID.String(),
-		TotalStock: inventory.Stock,
+		TotalStock: inventory.TotalStock,
 	}
 }

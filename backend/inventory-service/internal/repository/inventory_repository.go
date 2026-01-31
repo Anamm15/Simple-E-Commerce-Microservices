@@ -8,12 +8,15 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type InventoryRepository interface {
 	GetByProductID(ctx context.Context, productID uuid.UUID) (*model.Inventory, error)
+	GetBatchInventoryByProductIDsWithLock(ctx context.Context, tx *gorm.DB, productIDs []uuid.UUID) ([]*model.Inventory, error)
 	Create(ctx context.Context, inventory *model.Inventory) error
 	Update(ctx context.Context, inventory *model.Inventory) error
+	UpdateWithTx(ctx context.Context, tx *gorm.DB, inventory *model.Inventory) error
 	Delete(ctx context.Context, productID uuid.UUID) error
 }
 
@@ -43,6 +46,23 @@ func (r *inventoryRepository) GetByProductID(
 	return &inventory, err
 }
 
+func (r *inventoryRepository) GetBatchInventoryByProductIDsWithLock(
+	ctx context.Context,
+	tx *gorm.DB,
+	productIDs []uuid.UUID,
+) ([]*model.Inventory, error) {
+	var inventories []*model.Inventory
+
+	err := tx.
+		WithContext(ctx).
+		Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("product_id IN ?", productIDs).
+		Find(&inventories).
+		Error
+
+	return inventories, err
+}
+
 func (r *inventoryRepository) Create(
 	ctx context.Context,
 	inventory *model.Inventory,
@@ -62,7 +82,21 @@ func (r *inventoryRepository) Update(
 		Model(&model.Inventory{}).
 		Where("product_id = ?", inventory.ProductID).
 		Updates(map[string]interface{}{
-			"stock": inventory.Stock,
+			"stock": inventory.TotalStock,
+		}).
+		Error
+}
+
+func (r *inventoryRepository) UpdateWithTx(
+	ctx context.Context,
+	tx *gorm.DB,
+	inventory *model.Inventory,
+) error {
+	return tx.WithContext(ctx).
+		Model(&model.Inventory{}).
+		Where("product_id = ?", inventory.ProductID).
+		Updates(map[string]interface{}{
+			"stock": inventory.TotalStock,
 		}).
 		Error
 }

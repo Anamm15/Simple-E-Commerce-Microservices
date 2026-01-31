@@ -35,7 +35,8 @@ func main() {
 
 	// 🔹 Initializing repository, service, and controller
 	inventoryRepository := repository.NewInventoryRepository(db)
-	inventoryService := service.NewInventoryService(inventoryRepository)
+	inventoryReservationRepository := repository.NewInventoryReservationRepository(db)
+	inventoryService := service.NewInventoryService(db, inventoryRepository, inventoryReservationRepository)
 	inventoryController := controller.NewInventoryController(inventoryService)
 
 	// 🔹 Setup gRPC server

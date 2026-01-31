@@ -38,7 +38,7 @@ func (c *InventoryController) CheckStock(ctx context.Context, request *inventory
 }
 
 func (c *InventoryController) ReserveStock(ctx context.Context, request *inventorypb.ReserveStockRequest) (*inventorypb.ReserveStockResponse, error) {
-	input := dto.ReserveAndReleaseStockRequestDTO{
+	input := dto.ReserveStockRequestDTO{
 		OrderID: request.OrderId,
 		Items:   request.Items,
 	}
@@ -65,9 +65,9 @@ func (c *InventoryController) UpdateStock(ctx context.Context, request *inventor
 }
 
 func (c *InventoryController) ReleaseStock(ctx context.Context, request *inventorypb.ReleaseStockRequest) (*emptypb.Empty, error) {
-	input := dto.ReserveAndReleaseStockRequestDTO{
+	input := dto.ReleaseStockRequestDTO{
 		OrderID: request.OrderId,
-		Items:   request.Items,
+		Action:  request.Action,
 	}
 
 	err := c.InventoryService.ReleaseStock(ctx, input)
