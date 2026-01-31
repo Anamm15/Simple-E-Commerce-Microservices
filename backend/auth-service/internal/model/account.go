@@ -9,7 +9,7 @@ import (
 )
 
 type Account struct {
-	ID         uuid.UUID        `gorm:"primaryKey;autoIncrement"`
+	ID         uuid.UUID        `gorm:"primaryKey;autoIncrement;default:gen_random_uuid()"`
 	Email      string           `gorm:"uniqueIndex;not null"`
 	Username   string           `gorm:"uniqueIndex;not null"`
 	Password   string           `gorm:"not null"`

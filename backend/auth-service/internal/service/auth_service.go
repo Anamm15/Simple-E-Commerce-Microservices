@@ -11,7 +11,7 @@ import (
 	"auth-service/internal/model"
 	authpb "auth-service/internal/pb/auth"
 	"auth-service/internal/repository"
-	"auth-service/internal/util"
+	"auth-service/pkg/util"
 )
 
 type AuthService interface {

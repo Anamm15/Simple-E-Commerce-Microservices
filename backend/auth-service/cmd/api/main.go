@@ -6,8 +6,8 @@ import (
 	"net"
 	"os"
 
-	"auth-service/internal/config"
 	"auth-service/internal/controller"
+	"auth-service/internal/infrastructure/dbms"
 	"auth-service/internal/repository"
 	"auth-service/internal/service"
 
@@ -31,7 +31,7 @@ func main() {
 	}
 
 	// 🔹 Connecting to database
-	db := config.ConnectDatabase()
+	db := dbms.ConnectDatabase()
 
 	// 🔹 Initializing repository, service, and controller
 	accountRepository := repository.NewAccountRepository(db)
