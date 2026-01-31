@@ -8,7 +8,7 @@ import (
 	"user-service/internal/model"
 	userpb "user-service/internal/pb/user"
 	"user-service/internal/repository"
-	"user-service/internal/util"
+	"user-service/pkg/util"
 
 	"github.com/google/uuid"
 )

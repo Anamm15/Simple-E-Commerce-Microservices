@@ -6,8 +6,8 @@ import (
 	"net"
 	"os"
 
-	"user-service/internal/config"
 	"user-service/internal/controller"
+	"user-service/internal/infrastructure/dbms"
 	"user-service/internal/repository"
 	"user-service/internal/service"
 
@@ -31,7 +31,7 @@ func main() {
 	}
 
 	// 🔹 Connecting to database
-	db := config.ConnectDatabase()
+	db := dbms.ConnectDatabase()
 
 	// 🔹 Initializing repository, service, and controller
 	userRepository := repository.NewUserRepository(db)

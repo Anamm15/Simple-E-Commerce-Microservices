@@ -2,7 +2,7 @@ package dto
 
 import (
 	"user-service/internal/model"
-	"user-service/internal/util"
+	"user-service/pkg/util"
 )
 
 type AddressDetailResponseDTO struct {

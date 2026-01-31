@@ -3,7 +3,7 @@ package mapper
 import (
 	"user-service/internal/model"
 	userpb "user-service/internal/pb/user"
-	"user-service/internal/util"
+	"user-service/pkg/util"
 )
 
 func AddressDetailResponseMapper(address *model.Address) *userpb.AddressDetail {

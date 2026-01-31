@@ -7,7 +7,7 @@ import (
 )
 
 type Address struct {
-	ID uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	ID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 
 	Street   string `gorm:"type:varchar(255);not null" json:"street"`
 	City     string `gorm:"type:varchar(100);not null" json:"city"`
