@@ -9,7 +9,6 @@ func MapToProduct(product *model.Product) *productpb.Product {
 	return &productpb.Product{
 		Id:          product.ID.String(),
 		Name:        product.Name,
-		Slug:        product.Slug,
 		Description: product.Description,
 		Price:       product.Price,
 		WeightG:     product.WeightG,

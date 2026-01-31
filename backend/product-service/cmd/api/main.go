@@ -9,6 +9,8 @@ import (
 	"product-service/internal/config"
 	"product-service/internal/controller"
 	"product-service/internal/grpc_client"
+	"product-service/internal/infrastructure/cloud"
+	"product-service/internal/infrastructure/dbms"
 	"product-service/internal/repository"
 	"product-service/internal/service"
 
@@ -32,18 +34,36 @@ func main() {
 	}
 
 	// 🔹 Connecting to database
-	db := config.ConnectDatabase()
+	db := dbms.ConnectDatabase()
 
-	//🔹 Connecting to gRPC
-	productClient, err := grpc_client.InitInventoryClient(os.Getenv("INVENTORY_SERVICE_HOST"), os.Getenv("INVENTORY_SERVICE_PORT"))
+	// 🔹 Load Cloudinary Config
+	cloudConfig := config.LoadCloudinaryConfig()
+
+	// 🔹 Initialize Cloudinary Adapter
+	cloudSvc, err := cloud.NewCloudinaryService(
+		cloudConfig.CloudName,
+		cloudConfig.APIKey,
+		cloudConfig.APISecret,
+		cloudConfig.UploadFolder,
+	)
 	if err != nil {
-		log.Fatalf("failed to connect to product service: %v", err)
+		log.Fatalf("FATAL: Failed to init Cloudinary: %v", err)
+	}
+
+	// 🔹 Connecting to inventory
+	inventorySvc, err := grpc_client.InitInventoryClient(os.Getenv("INVENTORY_SERVICE_HOST"), os.Getenv("INVENTORY_SERVICE_PORT"))
+	if err != nil {
+		log.Fatalf("failed to connect to cart service: %v", err)
 	}
 
 	// 🔹 Initializing repository, service, and controller
 	productRepository := repository.NewProductRepository(db)
-	productService := service.NewProductService(cartRepository, productClient.Client)
-	productController := controller.NewProductController(cartService)
+	reviewRepository := repository.NewReviewRepository(db)
+	categoryRepository := repository.NewCategoryRepository(db)
+	ImageRepository := repository.NewImageRepository(db)
+	productService := service.NewProductService(productRepository, reviewRepository, categoryRepository, inventorySvc.Client, cloudSvc)
+	imageService := service.NewImageService(ImageRepository, cloudSvc)
+	productController := controller.NewProductController(productService, imageService)
 
 	// 🔹 Setup gRPC server
 	grpcServer := grpc.NewServer()
@@ -61,7 +81,7 @@ func main() {
 		log.Fatalf("failed to listen on port %s: %v", port, err)
 	}
 
-	log.Printf("✅ Cart Service run on port %s 🚀", port)
+	log.Printf("✅ Product Service run on port %s 🚀", port)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

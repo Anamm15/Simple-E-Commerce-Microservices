@@ -9,3 +9,7 @@ func StringToUUID(uuidString string) (uuid.UUID, error) {
 func UUIDToString(uuid uuid.UUID) string {
 	return uuid.String()
 }
+
+func ByteToIOReader(b []byte) io.Reader {
+	return bytes.NewReader(b)
+}

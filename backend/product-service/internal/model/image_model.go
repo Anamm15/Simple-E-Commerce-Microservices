@@ -5,7 +5,7 @@ import (
 )
 
 type Image struct {
-	ID uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	ID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 
 	ProductID uuid.UUID `gorm:"type:uuid;index;not null" json:"product_id"`
 	URL       string    `gorm:"type:text;not null" json:"url"`

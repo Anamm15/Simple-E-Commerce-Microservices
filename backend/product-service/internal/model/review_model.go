@@ -7,7 +7,7 @@ import (
 )
 
 type Review struct {
-	ID uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	ID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 
 	ProductID uuid.UUID `gorm:"type:uuid;index;not null" json:"product_id"`
 	UserID    uuid.UUID `gorm:"type:uuid;index;not null" json:"user_id"`

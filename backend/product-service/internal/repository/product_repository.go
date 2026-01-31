@@ -11,11 +11,13 @@ import (
 
 type ProductRepository interface {
 	GetAllProducts(ctx context.Context) ([]model.Product, error)
-	GetProductById(ctx context.Context, productId uuid.UUID) (model.Product, error)
+	GetProductByID(ctx context.Context, productId uuid.UUID) (*model.Product, error)
+	GetBatchProductByIDS(ctx context.Context, productIDs []uuid.UUID) ([]model.Product, error)
 	GetProductsByCategory(ctx context.Context, categoryId uuid.UUID) ([]model.Product, error)
-	GetDetailProduct(ctx context.Context, productId uuid.UUID) (model.Product, error)
+	GetDetailProduct(ctx context.Context, productId uuid.UUID) (*model.Product, error)
 	CreateProduct(ctx context.Context, product *model.Product) error
 	UpdateProduct(ctx context.Context, product *model.Product) error
+	UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string) error
 	DeleteProduct(ctx context.Context, productId uuid.UUID) error
 }
 
@@ -40,28 +42,46 @@ func (r *productRepository) GetAllProducts(ctx context.Context) ([]model.Product
 	return products, nil
 }
 
-func (r *productRepository) GetProductById(ctx context.Context, productId uuid.UUID) (model.Product, error) {
+func (r *productRepository) GetProductByID(ctx context.Context, productId uuid.UUID) (*model.Product, error) {
 	var product model.Product
 	if err := r.db.WithContext(ctx).
 		Where("id = ?", productId).
 		Find(&product).Error; err != nil {
-		return model.Product{}, err
+		return nil, err
 	}
 
-	return product, nil
+	return &product, nil
 }
 
-func (r *productRepository) GetDetailProduct(ctx context.Context, productId uuid.UUID) (model.Product, error) {
+func (r *productRepository) GetBatchProductByIDS(ctx context.Context, productIDs []uuid.UUID) ([]model.Product, error) {
+	if len(productIDs) == 0 {
+		return []model.Product{}, nil
+	}
+
+	var products []model.Product
+
+	err := r.db.WithContext(ctx).
+		Where("id IN ?", productIDs).
+		Find(&products).
+		Error
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
+func (r *productRepository) GetDetailProduct(ctx context.Context, productId uuid.UUID) (*model.Product, error) {
 	var product model.Product
 	if err := r.db.WithContext(ctx).
 		Preload("Categories").
 		Preload("Images").
 		Where("id = ?", productId).
 		Find(&product).Error; err != nil {
-		return model.Product{}, err
+		return nil, err
 	}
 
-	return product, nil
+	return &product, nil
 }
 
 func (r *productRepository) GetProductsByCategory(ctx context.Context, categoryId uuid.UUID) ([]model.Product, error) {
@@ -89,6 +109,16 @@ func (r *productRepository) CreateProduct(ctx context.Context, product *model.Pr
 func (r *productRepository) UpdateProduct(ctx context.Context, product *model.Product) error {
 	if err := r.db.WithContext(ctx).
 		Save(&product).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *productRepository) UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string) error {
+	if err := r.db.WithContext(ctx).
+		Where("id = ?", productID).
+		Update("thumbnail", thumbnail).Error; err != nil {
 		return err
 	}
 
