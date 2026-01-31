@@ -20,12 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_GetProducts_FullMethodName      = "/product.ProductService/GetProducts"
-	ProductService_GetProductDetail_FullMethodName = "/product.ProductService/GetProductDetail"
-	ProductService_GetProductBatch_FullMethodName  = "/product.ProductService/GetProductBatch"
-	ProductService_CreateProduct_FullMethodName    = "/product.ProductService/CreateProduct"
-	ProductService_UpdateProduct_FullMethodName    = "/product.ProductService/UpdateProduct"
-	ProductService_DeleteProduct_FullMethodName    = "/product.ProductService/DeleteProduct"
+	ProductService_GetProducts_FullMethodName            = "/product.ProductService/GetProducts"
+	ProductService_GetProductDetail_FullMethodName       = "/product.ProductService/GetProductDetail"
+	ProductService_GetProductBatch_FullMethodName        = "/product.ProductService/GetProductBatch"
+	ProductService_CreateProduct_FullMethodName          = "/product.ProductService/CreateProduct"
+	ProductService_UpdateProduct_FullMethodName          = "/product.ProductService/UpdateProduct"
+	ProductService_AddImageProduct_FullMethodName        = "/product.ProductService/AddImageProduct"
+	ProductService_UpdateThumbnailProduct_FullMethodName = "/product.ProductService/UpdateThumbnailProduct"
+	ProductService_DeleteImageProduct_FullMethodName     = "/product.ProductService/DeleteImageProduct"
+	ProductService_DeleteProduct_FullMethodName          = "/product.ProductService/DeleteProduct"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -39,6 +42,9 @@ type ProductServiceClient interface {
 	// Admin / Seller Operations
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*ProductDetail, error)
 	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*ProductDetail, error)
+	AddImageProduct(ctx context.Context, in *AddImageProductRequest, opts ...grpc.CallOption) (*ImageProductResponse, error)
+	UpdateThumbnailProduct(ctx context.Context, in *UpdateThumbnailProductRequest, opts ...grpc.CallOption) (*UpdateThumbnailProductResponse, error)
+	DeleteImageProduct(ctx context.Context, in *DeleteImageProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -100,6 +106,36 @@ func (c *productServiceClient) UpdateProduct(ctx context.Context, in *UpdateProd
 	return out, nil
 }
 
+func (c *productServiceClient) AddImageProduct(ctx context.Context, in *AddImageProductRequest, opts ...grpc.CallOption) (*ImageProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ImageProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_AddImageProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) UpdateThumbnailProduct(ctx context.Context, in *UpdateThumbnailProductRequest, opts ...grpc.CallOption) (*UpdateThumbnailProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateThumbnailProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_UpdateThumbnailProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) DeleteImageProduct(ctx context.Context, in *DeleteImageProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ProductService_DeleteImageProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *productServiceClient) DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -121,6 +157,9 @@ type ProductServiceServer interface {
 	// Admin / Seller Operations
 	CreateProduct(context.Context, *CreateProductRequest) (*ProductDetail, error)
 	UpdateProduct(context.Context, *UpdateProductRequest) (*ProductDetail, error)
+	AddImageProduct(context.Context, *AddImageProductRequest) (*ImageProductResponse, error)
+	UpdateThumbnailProduct(context.Context, *UpdateThumbnailProductRequest) (*UpdateThumbnailProductResponse, error)
+	DeleteImageProduct(context.Context, *DeleteImageProductRequest) (*emptypb.Empty, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
@@ -146,6 +185,15 @@ func (UnimplementedProductServiceServer) CreateProduct(context.Context, *CreateP
 }
 func (UnimplementedProductServiceServer) UpdateProduct(context.Context, *UpdateProductRequest) (*ProductDetail, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProduct not implemented")
+}
+func (UnimplementedProductServiceServer) AddImageProduct(context.Context, *AddImageProductRequest) (*ImageProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddImageProduct not implemented")
+}
+func (UnimplementedProductServiceServer) UpdateThumbnailProduct(context.Context, *UpdateThumbnailProductRequest) (*UpdateThumbnailProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateThumbnailProduct not implemented")
+}
+func (UnimplementedProductServiceServer) DeleteImageProduct(context.Context, *DeleteImageProductRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteImageProduct not implemented")
 }
 func (UnimplementedProductServiceServer) DeleteProduct(context.Context, *DeleteProductRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
@@ -261,6 +309,60 @@ func _ProductService_UpdateProduct_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_AddImageProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddImageProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).AddImageProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_AddImageProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).AddImageProduct(ctx, req.(*AddImageProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_UpdateThumbnailProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateThumbnailProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).UpdateThumbnailProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_UpdateThumbnailProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).UpdateThumbnailProduct(ctx, req.(*UpdateThumbnailProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_DeleteImageProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteImageProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).DeleteImageProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_DeleteImageProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).DeleteImageProduct(ctx, req.(*DeleteImageProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProductService_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteProductRequest)
 	if err := dec(in); err != nil {
@@ -305,6 +407,18 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProduct",
 			Handler:    _ProductService_UpdateProduct_Handler,
+		},
+		{
+			MethodName: "AddImageProduct",
+			Handler:    _ProductService_AddImageProduct_Handler,
+		},
+		{
+			MethodName: "UpdateThumbnailProduct",
+			Handler:    _ProductService_UpdateThumbnailProduct_Handler,
+		},
+		{
+			MethodName: "DeleteImageProduct",
+			Handler:    _ProductService_DeleteImageProduct_Handler,
 		},
 		{
 			MethodName: "DeleteProduct",

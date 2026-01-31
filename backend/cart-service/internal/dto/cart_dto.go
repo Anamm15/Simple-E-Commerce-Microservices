@@ -2,7 +2,7 @@ package dto
 
 import (
 	"cart-service/internal/model"
-	"cart-service/internal/util"
+	"cart-service/pkg/util"
 )
 
 type AddCartItemRequestDTO struct {

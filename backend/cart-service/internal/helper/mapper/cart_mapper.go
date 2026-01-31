@@ -4,7 +4,7 @@ import (
 	"cart-service/internal/model"
 	cartpb "cart-service/internal/pb/cart"
 	productpb "cart-service/internal/pb/product"
-	"cart-service/internal/util"
+	"cart-service/pkg/util"
 )
 
 func MapCartResponse(cartItem model.CartItem, productItem *productpb.Product) *cartpb.CartItem {
@@ -15,7 +15,7 @@ func MapCartResponse(cartItem model.CartItem, productItem *productpb.Product) *c
 		ProductId:    productID,
 		Quantity:     cartItem.Quantity,
 		ProductName:  productItem.Name,
-		ProductImage: productItem.ImageUrl,
+		ProductImage: productItem.Thumbnail,
 		ProductPrice: productItem.Price,
 		Subtotal:     int64(cartItem.Quantity) * productItem.Price,
 	}

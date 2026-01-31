@@ -16,6 +16,9 @@ service ProductService {
   // Admin / Seller Operations
   rpc CreateProduct(CreateProductRequest) returns (ProductDetail);
   rpc UpdateProduct(UpdateProductRequest) returns (ProductDetail);
+  rpc AddImageProduct(AddImageProductRequest) returns (ImageProductResponse);
+  rpc UpdateThumbnailProduct(UpdateThumbnailProductRequest) returns (UpdateThumbnailProductResponse);
+  rpc DeleteImageProduct(DeleteImageProductRequest) returns (google.protobuf.Empty);
   rpc DeleteProduct(DeleteProductRequest) returns (google.protobuf.Empty);
 }
 
@@ -24,23 +27,29 @@ service ProductService {
 // Representasi satu entity Product
 message Product {
   string id = 1;
-  string category_id = 2;
-  string category_name = 3; 
-  string name = 4;
-  string slug = 5;
-  string description = 6;
-  int64 price = 7;      
-  int32 weight_g = 8; 
-  string image_url = 9;
+  string name = 2;
+  string slug = 3;
+  string description =4;
+  int64 price = 5;      
+  int32 weight_g = 6;
+  string thumbnail = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
 }
 
 message ProductDetail {
   Product product = 1;
-  repeated Image additional_images = 2; 
-  repeated Review reviews = 3;        
-  float average_rating = 4;          
-  int32 total_reviews = 5;
+  repeated Image images = 2; 
+  repeated Category categories = 3;
+  repeated Review reviews = 4;        
+  float average_rating = 5;          
+  int32 total_reviews = 6;
 }
+
+message Category {
+  string id = 1;
+  string name = 2;
+} 
 
 message Image {
   string id = 1;
@@ -90,29 +99,53 @@ message ProductBatchResponse {
 }
 
 // 4. Create Product
+message ImageRequest {
+  string filename = 1;
+  string content_type = 2;
+  bytes data = 3;
+}
+
 message CreateProductRequest {
-  string category_id = 1;
+  repeated string categories = 1;
   string name = 2;
   string description = 3;
   int64 price = 4;
   int32 weight_g = 5;
-  string image_url = 6;
-  
-  repeated string additional_image_urls = 7; 
-  
-  int32 initial_stock = 8; 
+  int32 initial_stock = 6; 
+  ImageRequest thumbnail = 7;
+  repeated ImageRequest additional_imgs = 8;
 }
 
 // 5. Update Product
 message UpdateProductRequest {
   string id = 1;
-  string category_id = 2;
+  repeated string categories = 2;
   string name = 3;
   string description = 4;
   int64 price = 5;
   int32 weight_g = 6;
-  string image_url = 7;
-  repeated string additional_image_urls = 8;
+}
+
+message AddImageProductRequest {
+  string product_id = 1;
+  repeated ImageRequest images = 2;
+}
+
+message UpdateThumbnailProductRequest {
+  string product_id = 1;
+  ImageRequest image = 2;
+}
+
+message UpdateThumbnailProductResponse {
+  string image = 1;
+}
+
+message DeleteImageProductRequest {
+  string image_id = 1;
+}
+
+message ImageProductResponse {
+  repeated Image images = 1; 
 }
 
 // 6. Delete Product

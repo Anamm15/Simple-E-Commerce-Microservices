@@ -6,7 +6,6 @@ import (
 	"cart-service/internal/dto"
 	cartpb "cart-service/internal/pb/cart"
 	"cart-service/internal/service"
-	"cart-service/internal/util"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,12 +22,7 @@ func NewCartController(cartService service.CartService) *cartController {
 }
 
 func (c *cartController) GetCart(ctx context.Context, req *cartpb.GetCartRequest) (*cartpb.CartDetails, error) {
-	userID, err := util.StringToUUID(req.UserId)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	return c.cartService.GetCart(ctx, userID.String())
+	return c.cartService.GetCart(ctx, req.UserId)
 }
 
 func (c *cartController) AddItem(ctx context.Context, req *cartpb.AddItemRequest) (*cartpb.CartItem, error) {

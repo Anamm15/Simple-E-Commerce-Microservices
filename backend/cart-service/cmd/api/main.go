@@ -6,9 +6,9 @@ import (
 	"net"
 	"os"
 
-	"cart-service/internal/config"
 	"cart-service/internal/controller"
 	"cart-service/internal/grpc_client"
+	"cart-service/internal/infrastructure/dbms"
 	"cart-service/internal/repository"
 	"cart-service/internal/service"
 
@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// 🔹 Connecting to database
-	db := config.ConnectDatabase()
+	db := dbms.ConnectDatabase()
 
 	//🔹 Connecting to gRPC
 	productClient, err := grpc_client.InitProductClient(os.Getenv("PRODUCT_SERVICE_HOST"), os.Getenv("PRODUCT_SERVICE_PORT"))
