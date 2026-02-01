@@ -122,6 +122,15 @@ func (r *productService) CreateProduct(ctx context.Context, request dto.CreatePr
 		return nil, err
 	}
 
+	// create inventory
+	_, err = r.inventoryClient.CreateStock(ctx, &inventorypb.CreateStockRequest{
+		ProductId: product.ID.String(),
+		Quantity:  request.InitialStock,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	return mapper.MapToProductDetail(product), nil
 }
 
