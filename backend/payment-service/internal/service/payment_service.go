@@ -9,7 +9,7 @@ import (
 	"payment-service/internal/infrastructure/kafka"
 	paymentpb "payment-service/internal/pb/payment"
 	"payment-service/internal/repository"
-	"payment-service/internal/util"
+	"payment-service/pkg/util"
 
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"

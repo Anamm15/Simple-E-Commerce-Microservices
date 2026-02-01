@@ -2,7 +2,7 @@ package dto
 
 import (
 	"payment-service/internal/model"
-	"payment-service/internal/util"
+	"payment-service/pkg/util"
 )
 
 type CreatePaymentRequestDTO struct {
