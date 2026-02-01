@@ -8,7 +8,7 @@ import (
 	cartpb "cart-service/internal/pb/cart"
 	productpb "cart-service/internal/pb/product"
 	"cart-service/internal/repository"
-	"cart-service/internal/util"
+	"cart-service/pkg/util"
 )
 
 type CartService interface {
