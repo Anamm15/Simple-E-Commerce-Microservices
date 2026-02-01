@@ -3,7 +3,7 @@ package dto
 import (
 	"inventory-service/internal/model"
 	inventorypb "inventory-service/internal/pb/inventory"
-	"inventory-service/internal/util"
+	"inventory-service/pkg/util"
 )
 
 type CreateStockRequestDTO struct {

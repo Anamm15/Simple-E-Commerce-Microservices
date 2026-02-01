@@ -12,7 +12,7 @@ import (
 	"inventory-service/internal/model"
 	inventorypb "inventory-service/internal/pb/inventory"
 	"inventory-service/internal/repository"
-	"inventory-service/internal/util"
+	"inventory-service/pkg/util"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
