@@ -1,11 +1,10 @@
 package dto
 
 type GetNotificationsRequestDTO struct {
-	Page  int32 `form:"page,default=1"`
-	Limit int32 `form:"limit,default=20"`
+	Page  int32  `json:"page"`
+	Limit int32  `json:"limit"`
+	Sort  string `json:"sort"`
 }
-
-type MarkNotificationReadRequestDTO struct{}
 
 type SendNotificationRequestDTO struct {
 	UserID  string `json:"user_id" binding:"required"`

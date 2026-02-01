@@ -34,6 +34,7 @@ func (nc *NotificationController) GetNotifications(ctx *gin.Context) {
 		UserId: userID,
 		Page:   req.Page,
 		Limit:  req.Limit,
+		Sort:   req.Sort,
 	}
 
 	grpcRes, err := nc.notificationClient.GetNotifications(ctx, grpcReq)

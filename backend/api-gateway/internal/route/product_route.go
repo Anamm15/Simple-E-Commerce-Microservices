@@ -17,7 +17,7 @@ func RegisterProductRoutes(router *gin.RouterGroup, productController *controlle
 		{
 			adminGroup.POST("", productController.CreateProduct)
 			adminGroup.PUT("/:id", productController.UpdateProduct)
-			adminGroup.POST("/images", productController.AddImages)
+			adminGroup.POST("/:id/images", productController.AddImages)
 			adminGroup.PATCH("/:id/images", productController.UpdateThumbnailProduct)
 			adminGroup.DELETE("/images/:id", productController.RemoveImages)
 			adminGroup.DELETE("/:id", productController.DeleteProduct)

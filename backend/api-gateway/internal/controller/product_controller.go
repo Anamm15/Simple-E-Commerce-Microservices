@@ -134,9 +134,11 @@ func (pc *ProductController) AddImages(c *gin.Context) {
 		return
 	}
 
+	productID := c.Param("id")
 	grpcImages := mapper.MapFilesToProductImages(files)
 	grpcReq := &productpb.AddImageProductRequest{
-		Images: grpcImages,
+		ProductId: productID,
+		Images:    grpcImages,
 	}
 
 	grpcRes, err := pc.productClient.AddImageProduct(c, grpcReq)

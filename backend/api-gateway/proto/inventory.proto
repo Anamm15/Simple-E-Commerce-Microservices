@@ -44,9 +44,7 @@ message ReserveStockRequest {
 }
 
 message ReserveStockResponse {
-  bool success = 1;
   repeated string out_of_stock_product_ids = 2; 
-  string message = 3;
 }
 
 // Update Stock
@@ -58,5 +56,5 @@ message UpdateStockRequest {
 // Release Stock (Rollback mechanism)
 message ReleaseStockRequest {
   string order_id = 1;
-  repeated StockItem items = 2;
+  string action = 2;
 }

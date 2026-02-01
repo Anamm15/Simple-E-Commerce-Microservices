@@ -43,7 +43,7 @@ type ProductServiceClient interface {
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*ProductDetail, error)
 	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*ProductDetail, error)
 	AddImageProduct(ctx context.Context, in *AddImageProductRequest, opts ...grpc.CallOption) (*ImageProductResponse, error)
-	UpdateThumbnailProduct(ctx context.Context, in *UpdateThumbnailProductRequest, opts ...grpc.CallOption) (*ImageProductResponse, error)
+	UpdateThumbnailProduct(ctx context.Context, in *UpdateThumbnailProductRequest, opts ...grpc.CallOption) (*UpdateThumbnailProductResponse, error)
 	DeleteImageProduct(ctx context.Context, in *DeleteImageProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -116,9 +116,9 @@ func (c *productServiceClient) AddImageProduct(ctx context.Context, in *AddImage
 	return out, nil
 }
 
-func (c *productServiceClient) UpdateThumbnailProduct(ctx context.Context, in *UpdateThumbnailProductRequest, opts ...grpc.CallOption) (*ImageProductResponse, error) {
+func (c *productServiceClient) UpdateThumbnailProduct(ctx context.Context, in *UpdateThumbnailProductRequest, opts ...grpc.CallOption) (*UpdateThumbnailProductResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ImageProductResponse)
+	out := new(UpdateThumbnailProductResponse)
 	err := c.cc.Invoke(ctx, ProductService_UpdateThumbnailProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -158,7 +158,7 @@ type ProductServiceServer interface {
 	CreateProduct(context.Context, *CreateProductRequest) (*ProductDetail, error)
 	UpdateProduct(context.Context, *UpdateProductRequest) (*ProductDetail, error)
 	AddImageProduct(context.Context, *AddImageProductRequest) (*ImageProductResponse, error)
-	UpdateThumbnailProduct(context.Context, *UpdateThumbnailProductRequest) (*ImageProductResponse, error)
+	UpdateThumbnailProduct(context.Context, *UpdateThumbnailProductRequest) (*UpdateThumbnailProductResponse, error)
 	DeleteImageProduct(context.Context, *DeleteImageProductRequest) (*emptypb.Empty, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedProductServiceServer()
@@ -189,7 +189,7 @@ func (UnimplementedProductServiceServer) UpdateProduct(context.Context, *UpdateP
 func (UnimplementedProductServiceServer) AddImageProduct(context.Context, *AddImageProductRequest) (*ImageProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddImageProduct not implemented")
 }
-func (UnimplementedProductServiceServer) UpdateThumbnailProduct(context.Context, *UpdateThumbnailProductRequest) (*ImageProductResponse, error) {
+func (UnimplementedProductServiceServer) UpdateThumbnailProduct(context.Context, *UpdateThumbnailProductRequest) (*UpdateThumbnailProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateThumbnailProduct not implemented")
 }
 func (UnimplementedProductServiceServer) DeleteImageProduct(context.Context, *DeleteImageProductRequest) (*emptypb.Empty, error) {

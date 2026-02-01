@@ -5,6 +5,7 @@ import (
 
 	"api-gateway/internal/dto"
 	"api-gateway/internal/helper/constant"
+	"api-gateway/internal/helper/mapper"
 	orderpb "api-gateway/internal/pb/order"
 	"api-gateway/pkg/util"
 
@@ -30,12 +31,14 @@ func (c *OrderController) Checkout(ctx *gin.Context) {
 	}
 
 	userID := ctx.MustGet("user_id").(string)
+	email := ctx.MustGet("email").(string)
 	grpcReq := &orderpb.CheckoutRequest{
 		UserId:      userID,
-		Address:     req.Address,
+		Address:     mapper.AddressSnapshotToProto(req.Address),
 		CourierCode: req.CourierCode,
 		ServiceCode: req.ServiceCode,
-		ProductIds:  req.ProdcutIDs,
+		Products:    mapper.ProductCheckoutRequestToProto(req.Products),
+		Email:       email,
 	}
 
 	grpcRes, err := c.orderService.Checkout(ctx, grpcReq)
@@ -66,6 +69,7 @@ func (c *OrderController) GetOrderHistory(ctx *gin.Context) {
 		Page:         req.Page,
 		Limit:        req.Limit,
 		StatusFilter: statusEnum,
+		Sort:         req.Sort,
 	}
 
 	grpcRes, err := c.orderService.GetOrderHistory(ctx, grpcReq)

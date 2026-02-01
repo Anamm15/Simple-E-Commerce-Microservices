@@ -19,18 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ShippingService_CalculateCost_FullMethodName       = "/shipping.ShippingService/CalculateCost"
-	ShippingService_InputTrackingNumber_FullMethodName = "/shipping.ShippingService/InputTrackingNumber"
-	ShippingService_GetShipmentStatus_FullMethodName   = "/shipping.ShippingService/GetShipmentStatus"
+	ShippingService_OfferShippingCost_FullMethodName  = "/shipping.ShippingService/OfferShippingCost"
+	ShippingService_CalculateFinalCost_FullMethodName = "/shipping.ShippingService/CalculateFinalCost"
+	ShippingService_GetShipment_FullMethodName        = "/shipping.ShippingService/GetShipment"
+	ShippingService_Create_FullMethodName             = "/shipping.ShippingService/Create"
 )
 
 // ShippingServiceClient is the client API for ShippingService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ShippingServiceClient interface {
-	CalculateCost(ctx context.Context, in *ShippingCostRequest, opts ...grpc.CallOption) (*ShippingCostResponse, error)
-	InputTrackingNumber(ctx context.Context, in *InputTrackingRequest, opts ...grpc.CallOption) (*ShipmentDetail, error)
-	GetShipmentStatus(ctx context.Context, in *GetShipmentStatusRequest, opts ...grpc.CallOption) (*ShipmentDetail, error)
+	OfferShippingCost(ctx context.Context, in *ShippingCostOfferRequest, opts ...grpc.CallOption) (*ShippingCostOfferResponse, error)
+	CalculateFinalCost(ctx context.Context, in *ShippingCostRequest, opts ...grpc.CallOption) (*ShippingCostResponse, error)
+	GetShipment(ctx context.Context, in *GetShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error)
+	Create(ctx context.Context, in *CreateShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error)
 }
 
 type shippingServiceClient struct {
@@ -41,30 +43,40 @@ func NewShippingServiceClient(cc grpc.ClientConnInterface) ShippingServiceClient
 	return &shippingServiceClient{cc}
 }
 
-func (c *shippingServiceClient) CalculateCost(ctx context.Context, in *ShippingCostRequest, opts ...grpc.CallOption) (*ShippingCostResponse, error) {
+func (c *shippingServiceClient) OfferShippingCost(ctx context.Context, in *ShippingCostOfferRequest, opts ...grpc.CallOption) (*ShippingCostOfferResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ShippingCostOfferResponse)
+	err := c.cc.Invoke(ctx, ShippingService_OfferShippingCost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *shippingServiceClient) CalculateFinalCost(ctx context.Context, in *ShippingCostRequest, opts ...grpc.CallOption) (*ShippingCostResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ShippingCostResponse)
-	err := c.cc.Invoke(ctx, ShippingService_CalculateCost_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ShippingService_CalculateFinalCost_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *shippingServiceClient) InputTrackingNumber(ctx context.Context, in *InputTrackingRequest, opts ...grpc.CallOption) (*ShipmentDetail, error) {
+func (c *shippingServiceClient) GetShipment(ctx context.Context, in *GetShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ShipmentDetail)
-	err := c.cc.Invoke(ctx, ShippingService_InputTrackingNumber_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ShippingService_GetShipment_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *shippingServiceClient) GetShipmentStatus(ctx context.Context, in *GetShipmentStatusRequest, opts ...grpc.CallOption) (*ShipmentDetail, error) {
+func (c *shippingServiceClient) Create(ctx context.Context, in *CreateShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ShipmentDetail)
-	err := c.cc.Invoke(ctx, ShippingService_GetShipmentStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ShippingService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +87,10 @@ func (c *shippingServiceClient) GetShipmentStatus(ctx context.Context, in *GetSh
 // All implementations must embed UnimplementedShippingServiceServer
 // for forward compatibility.
 type ShippingServiceServer interface {
-	CalculateCost(context.Context, *ShippingCostRequest) (*ShippingCostResponse, error)
-	InputTrackingNumber(context.Context, *InputTrackingRequest) (*ShipmentDetail, error)
-	GetShipmentStatus(context.Context, *GetShipmentStatusRequest) (*ShipmentDetail, error)
+	OfferShippingCost(context.Context, *ShippingCostOfferRequest) (*ShippingCostOfferResponse, error)
+	CalculateFinalCost(context.Context, *ShippingCostRequest) (*ShippingCostResponse, error)
+	GetShipment(context.Context, *GetShipmentRequest) (*ShipmentDetail, error)
+	Create(context.Context, *CreateShipmentRequest) (*ShipmentDetail, error)
 	mustEmbedUnimplementedShippingServiceServer()
 }
 
@@ -88,14 +101,17 @@ type ShippingServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedShippingServiceServer struct{}
 
-func (UnimplementedShippingServiceServer) CalculateCost(context.Context, *ShippingCostRequest) (*ShippingCostResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CalculateCost not implemented")
+func (UnimplementedShippingServiceServer) OfferShippingCost(context.Context, *ShippingCostOfferRequest) (*ShippingCostOfferResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OfferShippingCost not implemented")
 }
-func (UnimplementedShippingServiceServer) InputTrackingNumber(context.Context, *InputTrackingRequest) (*ShipmentDetail, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InputTrackingNumber not implemented")
+func (UnimplementedShippingServiceServer) CalculateFinalCost(context.Context, *ShippingCostRequest) (*ShippingCostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CalculateFinalCost not implemented")
 }
-func (UnimplementedShippingServiceServer) GetShipmentStatus(context.Context, *GetShipmentStatusRequest) (*ShipmentDetail, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetShipmentStatus not implemented")
+func (UnimplementedShippingServiceServer) GetShipment(context.Context, *GetShipmentRequest) (*ShipmentDetail, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetShipment not implemented")
+}
+func (UnimplementedShippingServiceServer) Create(context.Context, *CreateShipmentRequest) (*ShipmentDetail, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedShippingServiceServer) mustEmbedUnimplementedShippingServiceServer() {}
 func (UnimplementedShippingServiceServer) testEmbeddedByValue()                         {}
@@ -118,56 +134,74 @@ func RegisterShippingServiceServer(s grpc.ServiceRegistrar, srv ShippingServiceS
 	s.RegisterService(&ShippingService_ServiceDesc, srv)
 }
 
-func _ShippingService_CalculateCost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ShippingService_OfferShippingCost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ShippingCostOfferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).OfferShippingCost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShippingService_OfferShippingCost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).OfferShippingCost(ctx, req.(*ShippingCostOfferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ShippingService_CalculateFinalCost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ShippingCostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShippingServiceServer).CalculateCost(ctx, in)
+		return srv.(ShippingServiceServer).CalculateFinalCost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShippingService_CalculateCost_FullMethodName,
+		FullMethod: ShippingService_CalculateFinalCost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShippingServiceServer).CalculateCost(ctx, req.(*ShippingCostRequest))
+		return srv.(ShippingServiceServer).CalculateFinalCost(ctx, req.(*ShippingCostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ShippingService_InputTrackingNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InputTrackingRequest)
+func _ShippingService_GetShipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetShipmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShippingServiceServer).InputTrackingNumber(ctx, in)
+		return srv.(ShippingServiceServer).GetShipment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShippingService_InputTrackingNumber_FullMethodName,
+		FullMethod: ShippingService_GetShipment_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShippingServiceServer).InputTrackingNumber(ctx, req.(*InputTrackingRequest))
+		return srv.(ShippingServiceServer).GetShipment(ctx, req.(*GetShipmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ShippingService_GetShipmentStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetShipmentStatusRequest)
+func _ShippingService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateShipmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ShippingServiceServer).GetShipmentStatus(ctx, in)
+		return srv.(ShippingServiceServer).Create(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ShippingService_GetShipmentStatus_FullMethodName,
+		FullMethod: ShippingService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ShippingServiceServer).GetShipmentStatus(ctx, req.(*GetShipmentStatusRequest))
+		return srv.(ShippingServiceServer).Create(ctx, req.(*CreateShipmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -180,16 +214,20 @@ var ShippingService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ShippingServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CalculateCost",
-			Handler:    _ShippingService_CalculateCost_Handler,
+			MethodName: "OfferShippingCost",
+			Handler:    _ShippingService_OfferShippingCost_Handler,
 		},
 		{
-			MethodName: "InputTrackingNumber",
-			Handler:    _ShippingService_InputTrackingNumber_Handler,
+			MethodName: "CalculateFinalCost",
+			Handler:    _ShippingService_CalculateFinalCost_Handler,
 		},
 		{
-			MethodName: "GetShipmentStatus",
-			Handler:    _ShippingService_GetShipmentStatus_Handler,
+			MethodName: "GetShipment",
+			Handler:    _ShippingService_GetShipment_Handler,
+		},
+		{
+			MethodName: "Create",
+			Handler:    _ShippingService_Create_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

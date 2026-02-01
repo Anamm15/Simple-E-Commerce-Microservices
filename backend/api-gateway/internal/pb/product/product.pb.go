@@ -941,7 +941,8 @@ func (x *UpdateProductRequest) GetWeightG() int32 {
 
 type AddImageProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Images        []*ImageRequest        `protobuf:"bytes,1,rep,name=images,proto3" json:"images,omitempty"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Images        []*ImageRequest        `protobuf:"bytes,2,rep,name=images,proto3" json:"images,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -974,6 +975,13 @@ func (x *AddImageProductRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AddImageProductRequest.ProtoReflect.Descriptor instead.
 func (*AddImageProductRequest) Descriptor() ([]byte, []int) {
 	return file_proto_product_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AddImageProductRequest) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
 }
 
 func (x *AddImageProductRequest) GetImages() []*ImageRequest {
@@ -1035,6 +1043,50 @@ func (x *UpdateThumbnailProductRequest) GetImage() *ImageRequest {
 	return nil
 }
 
+type UpdateThumbnailProductResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Image         string                 `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateThumbnailProductResponse) Reset() {
+	*x = UpdateThumbnailProductResponse{}
+	mi := &file_proto_product_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateThumbnailProductResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateThumbnailProductResponse) ProtoMessage() {}
+
+func (x *UpdateThumbnailProductResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_product_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateThumbnailProductResponse.ProtoReflect.Descriptor instead.
+func (*UpdateThumbnailProductResponse) Descriptor() ([]byte, []int) {
+	return file_proto_product_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *UpdateThumbnailProductResponse) GetImage() string {
+	if x != nil {
+		return x.Image
+	}
+	return ""
+}
+
 type DeleteImageProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageId       string                 `protobuf:"bytes,1,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
@@ -1044,7 +1096,7 @@ type DeleteImageProductRequest struct {
 
 func (x *DeleteImageProductRequest) Reset() {
 	*x = DeleteImageProductRequest{}
-	mi := &file_proto_product_proto_msgTypes[15]
+	mi := &file_proto_product_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1056,7 +1108,7 @@ func (x *DeleteImageProductRequest) String() string {
 func (*DeleteImageProductRequest) ProtoMessage() {}
 
 func (x *DeleteImageProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_product_proto_msgTypes[15]
+	mi := &file_proto_product_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1069,7 +1121,7 @@ func (x *DeleteImageProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteImageProductRequest.ProtoReflect.Descriptor instead.
 func (*DeleteImageProductRequest) Descriptor() ([]byte, []int) {
-	return file_proto_product_proto_rawDescGZIP(), []int{15}
+	return file_proto_product_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DeleteImageProductRequest) GetImageId() string {
@@ -1088,7 +1140,7 @@ type ImageProductResponse struct {
 
 func (x *ImageProductResponse) Reset() {
 	*x = ImageProductResponse{}
-	mi := &file_proto_product_proto_msgTypes[16]
+	mi := &file_proto_product_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1100,7 +1152,7 @@ func (x *ImageProductResponse) String() string {
 func (*ImageProductResponse) ProtoMessage() {}
 
 func (x *ImageProductResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_product_proto_msgTypes[16]
+	mi := &file_proto_product_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1113,7 +1165,7 @@ func (x *ImageProductResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImageProductResponse.ProtoReflect.Descriptor instead.
 func (*ImageProductResponse) Descriptor() ([]byte, []int) {
-	return file_proto_product_proto_rawDescGZIP(), []int{16}
+	return file_proto_product_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ImageProductResponse) GetImages() []*Image {
@@ -1133,7 +1185,7 @@ type DeleteProductRequest struct {
 
 func (x *DeleteProductRequest) Reset() {
 	*x = DeleteProductRequest{}
-	mi := &file_proto_product_proto_msgTypes[17]
+	mi := &file_proto_product_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1145,7 +1197,7 @@ func (x *DeleteProductRequest) String() string {
 func (*DeleteProductRequest) ProtoMessage() {}
 
 func (x *DeleteProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_product_proto_msgTypes[17]
+	mi := &file_proto_product_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1158,7 +1210,7 @@ func (x *DeleteProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProductRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProductRequest) Descriptor() ([]byte, []int) {
-	return file_proto_product_proto_rawDescGZIP(), []int{17}
+	return file_proto_product_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *DeleteProductRequest) GetId() string {
@@ -1254,27 +1306,31 @@ const file_proto_product_proto_rawDesc = "" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x05 \x01(\x03R\x05price\x12\x19\n" +
-	"\bweight_g\x18\x06 \x01(\x05R\aweightG\"G\n" +
-	"\x16AddImageProductRequest\x12-\n" +
-	"\x06images\x18\x01 \x03(\v2\x15.product.ImageRequestR\x06images\"k\n" +
+	"\bweight_g\x18\x06 \x01(\x05R\aweightG\"f\n" +
+	"\x16AddImageProductRequest\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId\x12-\n" +
+	"\x06images\x18\x02 \x03(\v2\x15.product.ImageRequestR\x06images\"k\n" +
 	"\x1dUpdateThumbnailProductRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12+\n" +
 	"\x05image\x18\x02 \x01(\v2\x15.product.ImageRequestR\x05image\"6\n" +
+	"\x1eUpdateThumbnailProductResponse\x12\x14\n" +
+	"\x05image\x18\x01 \x01(\tR\x05image\"6\n" +
 	"\x19DeleteImageProductRequest\x12\x19\n" +
 	"\bimage_id\x18\x01 \x01(\tR\aimageId\">\n" +
 	"\x14ImageProductResponse\x12&\n" +
 	"\x06images\x18\x01 \x03(\v2\x0e.product.ImageR\x06images\"&\n" +
 	"\x14DeleteProductRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id2\xd2\x05\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id2\xdc\x05\n" +
 	"\x0eProductService\x12A\n" +
 	"\vGetProducts\x12\x1c.product.SearchFilterRequest\x1a\x14.product.ProductList\x12L\n" +
 	"\x10GetProductDetail\x12 .product.GetProductDetailRequest\x1a\x16.product.ProductDetail\x12Q\n" +
 	"\x0fGetProductBatch\x12\x1f.product.GetProductBatchRequest\x1a\x1d.product.ProductBatchResponse\x12F\n" +
 	"\rCreateProduct\x12\x1d.product.CreateProductRequest\x1a\x16.product.ProductDetail\x12F\n" +
 	"\rUpdateProduct\x12\x1d.product.UpdateProductRequest\x1a\x16.product.ProductDetail\x12Q\n" +
-	"\x0fAddImageProduct\x12\x1f.product.AddImageProductRequest\x1a\x1d.product.ImageProductResponse\x12_\n" +
-	"\x16UpdateThumbnailProduct\x12&.product.UpdateThumbnailProductRequest\x1a\x1d.product.ImageProductResponse\x12P\n" +
+	"\x0fAddImageProduct\x12\x1f.product.AddImageProductRequest\x1a\x1d.product.ImageProductResponse\x12i\n" +
+	"\x16UpdateThumbnailProduct\x12&.product.UpdateThumbnailProductRequest\x1a'.product.UpdateThumbnailProductResponse\x12P\n" +
 	"\x12DeleteImageProduct\x12\".product.DeleteImageProductRequest\x1a\x16.google.protobuf.Empty\x12F\n" +
 	"\rDeleteProduct\x12\x1d.product.DeleteProductRequest\x1a\x16.google.protobuf.EmptyB Z\x1e/internal/pb/product;productpbb\x06proto3"
 
@@ -1290,40 +1346,41 @@ func file_proto_product_proto_rawDescGZIP() []byte {
 	return file_proto_product_proto_rawDescData
 }
 
-var file_proto_product_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_proto_product_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_proto_product_proto_goTypes = []any{
-	(*Product)(nil),                       // 0: product.Product
-	(*ProductDetail)(nil),                 // 1: product.ProductDetail
-	(*Category)(nil),                      // 2: product.Category
-	(*Image)(nil),                         // 3: product.Image
-	(*Review)(nil),                        // 4: product.Review
-	(*SearchFilterRequest)(nil),           // 5: product.SearchFilterRequest
-	(*ProductList)(nil),                   // 6: product.ProductList
-	(*GetProductDetailRequest)(nil),       // 7: product.GetProductDetailRequest
-	(*GetProductBatchRequest)(nil),        // 8: product.GetProductBatchRequest
-	(*ProductBatchResponse)(nil),          // 9: product.ProductBatchResponse
-	(*ImageRequest)(nil),                  // 10: product.ImageRequest
-	(*CreateProductRequest)(nil),          // 11: product.CreateProductRequest
-	(*UpdateProductRequest)(nil),          // 12: product.UpdateProductRequest
-	(*AddImageProductRequest)(nil),        // 13: product.AddImageProductRequest
-	(*UpdateThumbnailProductRequest)(nil), // 14: product.UpdateThumbnailProductRequest
-	(*DeleteImageProductRequest)(nil),     // 15: product.DeleteImageProductRequest
-	(*ImageProductResponse)(nil),          // 16: product.ImageProductResponse
-	(*DeleteProductRequest)(nil),          // 17: product.DeleteProductRequest
-	nil,                                   // 18: product.ProductBatchResponse.ProductsEntry
-	(*timestamppb.Timestamp)(nil),         // 19: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),                 // 20: google.protobuf.Empty
+	(*Product)(nil),                        // 0: product.Product
+	(*ProductDetail)(nil),                  // 1: product.ProductDetail
+	(*Category)(nil),                       // 2: product.Category
+	(*Image)(nil),                          // 3: product.Image
+	(*Review)(nil),                         // 4: product.Review
+	(*SearchFilterRequest)(nil),            // 5: product.SearchFilterRequest
+	(*ProductList)(nil),                    // 6: product.ProductList
+	(*GetProductDetailRequest)(nil),        // 7: product.GetProductDetailRequest
+	(*GetProductBatchRequest)(nil),         // 8: product.GetProductBatchRequest
+	(*ProductBatchResponse)(nil),           // 9: product.ProductBatchResponse
+	(*ImageRequest)(nil),                   // 10: product.ImageRequest
+	(*CreateProductRequest)(nil),           // 11: product.CreateProductRequest
+	(*UpdateProductRequest)(nil),           // 12: product.UpdateProductRequest
+	(*AddImageProductRequest)(nil),         // 13: product.AddImageProductRequest
+	(*UpdateThumbnailProductRequest)(nil),  // 14: product.UpdateThumbnailProductRequest
+	(*UpdateThumbnailProductResponse)(nil), // 15: product.UpdateThumbnailProductResponse
+	(*DeleteImageProductRequest)(nil),      // 16: product.DeleteImageProductRequest
+	(*ImageProductResponse)(nil),           // 17: product.ImageProductResponse
+	(*DeleteProductRequest)(nil),           // 18: product.DeleteProductRequest
+	nil,                                    // 19: product.ProductBatchResponse.ProductsEntry
+	(*timestamppb.Timestamp)(nil),          // 20: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                  // 21: google.protobuf.Empty
 }
 var file_proto_product_proto_depIdxs = []int32{
-	19, // 0: product.Product.created_at:type_name -> google.protobuf.Timestamp
-	19, // 1: product.Product.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 0: product.Product.created_at:type_name -> google.protobuf.Timestamp
+	20, // 1: product.Product.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: product.ProductDetail.product:type_name -> product.Product
 	3,  // 3: product.ProductDetail.images:type_name -> product.Image
 	2,  // 4: product.ProductDetail.categories:type_name -> product.Category
 	4,  // 5: product.ProductDetail.reviews:type_name -> product.Review
-	19, // 6: product.Review.created_at:type_name -> google.protobuf.Timestamp
+	20, // 6: product.Review.created_at:type_name -> google.protobuf.Timestamp
 	0,  // 7: product.ProductList.products:type_name -> product.Product
-	18, // 8: product.ProductBatchResponse.products:type_name -> product.ProductBatchResponse.ProductsEntry
+	19, // 8: product.ProductBatchResponse.products:type_name -> product.ProductBatchResponse.ProductsEntry
 	10, // 9: product.CreateProductRequest.thumbnail:type_name -> product.ImageRequest
 	10, // 10: product.CreateProductRequest.additional_imgs:type_name -> product.ImageRequest
 	10, // 11: product.AddImageProductRequest.images:type_name -> product.ImageRequest
@@ -1337,17 +1394,17 @@ var file_proto_product_proto_depIdxs = []int32{
 	12, // 19: product.ProductService.UpdateProduct:input_type -> product.UpdateProductRequest
 	13, // 20: product.ProductService.AddImageProduct:input_type -> product.AddImageProductRequest
 	14, // 21: product.ProductService.UpdateThumbnailProduct:input_type -> product.UpdateThumbnailProductRequest
-	15, // 22: product.ProductService.DeleteImageProduct:input_type -> product.DeleteImageProductRequest
-	17, // 23: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
+	16, // 22: product.ProductService.DeleteImageProduct:input_type -> product.DeleteImageProductRequest
+	18, // 23: product.ProductService.DeleteProduct:input_type -> product.DeleteProductRequest
 	6,  // 24: product.ProductService.GetProducts:output_type -> product.ProductList
 	1,  // 25: product.ProductService.GetProductDetail:output_type -> product.ProductDetail
 	9,  // 26: product.ProductService.GetProductBatch:output_type -> product.ProductBatchResponse
 	1,  // 27: product.ProductService.CreateProduct:output_type -> product.ProductDetail
 	1,  // 28: product.ProductService.UpdateProduct:output_type -> product.ProductDetail
-	16, // 29: product.ProductService.AddImageProduct:output_type -> product.ImageProductResponse
-	16, // 30: product.ProductService.UpdateThumbnailProduct:output_type -> product.ImageProductResponse
-	20, // 31: product.ProductService.DeleteImageProduct:output_type -> google.protobuf.Empty
-	20, // 32: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
+	17, // 29: product.ProductService.AddImageProduct:output_type -> product.ImageProductResponse
+	15, // 30: product.ProductService.UpdateThumbnailProduct:output_type -> product.UpdateThumbnailProductResponse
+	21, // 31: product.ProductService.DeleteImageProduct:output_type -> google.protobuf.Empty
+	21, // 32: product.ProductService.DeleteProduct:output_type -> google.protobuf.Empty
 	24, // [24:33] is the sub-list for method output_type
 	15, // [15:24] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
@@ -1366,7 +1423,7 @@ func file_proto_product_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_product_proto_rawDesc), len(file_proto_product_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

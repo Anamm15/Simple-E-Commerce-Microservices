@@ -17,7 +17,7 @@ service ProductService {
   rpc CreateProduct(CreateProductRequest) returns (ProductDetail);
   rpc UpdateProduct(UpdateProductRequest) returns (ProductDetail);
   rpc AddImageProduct(AddImageProductRequest) returns (ImageProductResponse);
-  rpc UpdateThumbnailProduct(UpdateThumbnailProductRequest) returns (ImageProductResponse);
+  rpc UpdateThumbnailProduct(UpdateThumbnailProductRequest) returns (UpdateThumbnailProductResponse);
   rpc DeleteImageProduct(DeleteImageProductRequest) returns (google.protobuf.Empty);
   rpc DeleteProduct(DeleteProductRequest) returns (google.protobuf.Empty);
 }
@@ -127,12 +127,17 @@ message UpdateProductRequest {
 }
 
 message AddImageProductRequest {
-  repeated ImageRequest images = 1;
+  string product_id = 1;
+  repeated ImageRequest images = 2;
 }
 
 message UpdateThumbnailProductRequest {
   string product_id = 1;
   ImageRequest image = 2;
+}
+
+message UpdateThumbnailProductResponse {
+  string image = 1;
 }
 
 message DeleteImageProductRequest {

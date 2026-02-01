@@ -48,6 +48,7 @@ func SetupRouter(
 	orderCtrl := controller.NewOrderController(orderClient)
 	paymentCtrl := controller.NewPaymentController(paymentClient)
 	notificationCtrl := controller.NewNotificationController(notificationClient)
+	shippingCtrl := controller.NewShippingController(shippingClient)
 
 	// Registrasi Route per Domain
 	RegisterAuthRoutes(api, authCtrl)
@@ -58,6 +59,7 @@ func SetupRouter(
 	RegisterOrderRoutes(api, orderCtrl)
 	RegisterPaymentRoutes(api, paymentCtrl)
 	RegisterNotificationRoutes(api, notificationCtrl)
+	RegisterShippingRoutes(api, shippingCtrl)
 
 	return r
 }

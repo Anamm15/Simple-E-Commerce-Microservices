@@ -7,8 +7,8 @@ option go_package = "/internal/pb/shipping;shippingpb";
 import "google/protobuf/timestamp.proto";
 
 service ShippingService {
-  rpc CalculateCost(ShippingCostRequest) returns (ShippingCostResponse);
-  rpc InputTrackingNumber(InputTrackingRequest) returns (ShipmentDetail);
+  rpc OfferShippingCost(ShippingCostOfferRequest) returns (ShippingCostOfferResponse);
+  rpc CalculateFinalCost(ShippingCostRequest) returns (ShippingCostResponse);
   rpc GetShipment(GetShipmentRequest) returns (ShipmentDetail);
   rpc Create(CreateShipmentRequest) returns (ShipmentDetail);
 }
@@ -28,9 +28,26 @@ message ShipmentDetail {
 }
 
 // 1. Calculate Cost
+message ShippingCostOfferRequest {
+  string origin_city = 1;     
+  string destination_city = 2; 
+  int32 total_weight_g = 3;  
+}
+
+message ShippingOption {
+  string courier = 1;        
+  string service = 2;         
+  int64 cost = 3;              
+  int32 estimated_days = 4;  
+}
+
+message ShippingCostOfferResponse {
+  repeated ShippingOption options = 1;
+}
+
 message ShippingCostRequest {
-  string origin_city_id = 1;     
-  string destination_city_id = 2; 
+  string origin_city = 1;     
+  string destination_city = 2; 
   int32 total_weight_g = 3;       
   string courier_code = 4;      
   string service_code = 5;      
@@ -43,23 +60,17 @@ message ShippingCostResponse {
   string estimated_time = 4; 
 }
 
-// 2. Input Tracking Number
-message InputTrackingRequest {
-  string order_id = 1;    
-  string tracking_number = 2;
-  string courier_code = 3;
-}
 
-// 3. Get Shipment
+// 2. Get Shipment
 message GetShipmentRequest {
   string order_id = 1;
 }
 
-// 4. Create Shipment
+// 3. Create Shipment
 message CreateShipmentRequest {
   string order_id = 1;
   string courier_code = 2;
   string service_code = 3;
   string tracking_number = 4;
-  int64 shipping_cost = 6;
+  int64 shipping_cost = 5;
 }
