@@ -6,11 +6,17 @@ import (
 )
 
 type CalculateShippingCostRequestDTO struct {
-	OriginCityID      string `json:"origin_city_id" binding:"required"`
-	DestinationCityID string `json:"destination_city_id" binding:"required"`
-	TotalWeightG      int32  `json:"total_weight_g" binding:"required,min=1"`
-	CourierCode       string `json:"courier_code" binding:"required"`
-	ServiceCode       string `json:"service_code"`
+	OriginCity      string `json:"origin_city" binding:"required"`
+	DestinationCity string `json:"destination_city" binding:"required"`
+	TotalWeightG    int32  `json:"total_weight_g" binding:"required,min=1"`
+	CourierCode     string `json:"courier_code" binding:"required"`
+	ServiceCode     string `json:"service_code"`
+}
+
+type OfferShippingCostRequestDTO struct {
+	OriginCity      string `json:"origin_city" binding:"required"`
+	DestinationCity string `json:"destination_city" binding:"required"`
+	TotalWeightG    int32  `json:"total_weight_g" binding:"required,min=1"`
 }
 
 type InputTrackingNumberRequestDTO struct {
@@ -33,7 +39,7 @@ func (dto *CreateShipmentRequestDTO) ToModel() *model.Shipment {
 		OrderID:        orderID,
 		CourierCode:    dto.CourierCode,
 		ServiceCode:    dto.ServiceCode,
-		TrackingNumber: dto.TrackingNumber,
+		TrackingNumber: &dto.TrackingNumber,
 		ShippingCost:   dto.ShippingCost,
 	}
 }

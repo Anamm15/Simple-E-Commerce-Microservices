@@ -17,13 +17,23 @@ func NewShippingController(shippingService service.ShippingService) *ShippingCon
 	return &ShippingController{ShippingService: shippingService}
 }
 
+func (s *ShippingController) OfferShippingCost(ctx context.Context, request *shippingpb.ShippingCostOfferRequest) (*shippingpb.ShippingCostOfferResponse, error) {
+	input := dto.OfferShippingCostRequestDTO{
+		OriginCity:      request.OriginCity,
+		DestinationCity: request.DestinationCity,
+		TotalWeightG:    request.TotalWeightG,
+	}
+
+	return s.ShippingService.OfferShippingCost(ctx, input)
+}
+
 func (s *ShippingController) CalculateCost(ctx context.Context, request *shippingpb.ShippingCostRequest) (*shippingpb.ShippingCostResponse, error) {
 	input := dto.CalculateShippingCostRequestDTO{
-		OriginCityID:      request.OriginCityId,
-		DestinationCityID: request.DestinationCityId,
-		TotalWeightG:      request.TotalWeightG,
-		CourierCode:       request.CourierCode,
-		ServiceCode:       request.ServiceCode,
+		OriginCity:      request.OriginCity,
+		DestinationCity: request.DestinationCity,
+		TotalWeightG:    request.TotalWeightG,
+		CourierCode:     request.CourierCode,
+		ServiceCode:     request.ServiceCode,
 	}
 
 	cost, err := s.ShippingService.CalculateCost(ctx, input)
@@ -34,23 +44,8 @@ func (s *ShippingController) CalculateCost(ctx context.Context, request *shippin
 	return cost, nil
 }
 
-func (s *ShippingController) InputTrackingNumber(ctx context.Context, request *shippingpb.InputTrackingRequest) (*shippingpb.ShipmentDetail, error) {
-	input := dto.InputTrackingNumberRequestDTO{
-		OrderID:        request.OrderId,
-		TrackingNumber: request.TrackingNumber,
-		CourierCode:    request.CourierCode,
-	}
-
-	shipment, err := s.ShippingService.InputTrackingNumber(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return shipment, nil
-}
-
-func (s *ShippingController) GetShipmentStatus(ctx context.Context, request *shippingpb.GetShipmentStatusRequest) (*shippingpb.ShipmentDetail, error) {
-	shipment, err := s.ShippingService.GetShipmentStatus(ctx, request.OrderId)
+func (s *ShippingController) GetShipment(ctx context.Context, request *shippingpb.GetShipmentRequest) (*shippingpb.ShipmentDetail, error) {
+	shipment, err := s.ShippingService.GetShipment(ctx, request.OrderId)
 	if err != nil {
 		return nil, err
 	}

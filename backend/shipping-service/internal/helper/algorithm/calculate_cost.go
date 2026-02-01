@@ -1,72 +1,116 @@
 package algorithm
 
 import (
-	"errors"
+	"math"
+	"strings"
 )
 
-var PriceTable = map[string]map[string]int32{
-	"JNE": {
-		"kargo":     10000,
-		"regular":   15000,
-		"exclusive": 25000,
-	},
-	"JNT": {
-		"kargo":     9000,
-		"regular":   14000,
-		"exclusive": 23000,
-	},
-}
-
-// Estimated days delivery (custom)
-var EstimatedDaysTable = map[string]map[string]int32{
-	"JNE": {
-		"kargo":     5,
-		"regular":   3,
-		"exclusive": 1,
-	},
-	"JNT": {
-		"kargo":     4,
-		"regular":   2,
-		"exclusive": 1,
-	},
-}
-
 type ShippingOption struct {
-	Courier       string `json:"courier"`
-	ServiceType   string `json:"service_type"`
-	WeightKG      int32  `json:"weight_kg"`
-	PricePerKG    int32  `json:"price_per_kg"`
-	TotalCost     int32  `json:"total_cost"`
-	EstimatedDays int32  `json:"estimated_days"`
+	Courier       string
+	Service       string
+	Cost          int64
+	EstimatedDays int32
 }
 
-func CalculateAllCosts(weightKG int32) ([]ShippingOption, error) {
-	if weightKG <= 0 {
-		return nil, errors.New("weight must be greater than zero")
+type service struct {
+	name       string
+	multiplier float64
+	baseETD    int32
+}
+
+type courier struct {
+	code     string
+	services []service
+}
+
+var cityZone = map[string]int{
+	"jakarta":    1,
+	"bogor":      1,
+	"bandung":    2,
+	"surabaya":   2,
+	"denpasar":   3,
+	"medan":      3,
+	"balikpapan": 4,
+	"makassar":   5,
+}
+
+var basePricePerKg = map[int]int64{
+	1: 8000,
+	2: 10000,
+	3: 13000,
+	4: 16000,
+	5: 20000,
+}
+
+var etdAdjustment = map[int]int32{
+	1: 0,
+	2: 1,
+	3: 2,
+	4: 3,
+	5: 4,
+}
+
+var couriers = []courier{
+	{
+		code: "JNE",
+		services: []service{
+			{name: "REG", multiplier: 1.0, baseETD: 3},
+			{name: "YES", multiplier: 1.4, baseETD: 1},
+		},
+	},
+	{
+		code: "JNT",
+		services: []service{
+			{name: "REG", multiplier: 0.95, baseETD: 3},
+			{name: "EXP", multiplier: 1.3, baseETD: 1},
+		},
+	},
+	{
+		code: "SICEPAT",
+		services: []service{
+			{name: "REG", multiplier: 0.9, baseETD: 3},
+			{name: "BEST", multiplier: 1.25, baseETD: 1},
+		},
+	},
+}
+
+func CalculateShipping(
+	originCity string,
+	destinationCity string,
+	totalWeightG int32,
+) []ShippingOption {
+	originZone, ok := cityZone[strings.ToLower(originCity)]
+	if !ok {
+		return nil
 	}
 
-	if weightKG > 10 {
-		return nil, errors.New("weight exceeds maximum limit of 10 kg")
+	destZone, ok := cityZone[strings.ToLower(destinationCity)]
+	if !ok {
+		return nil
 	}
 
-	var options []ShippingOption
+	zoneDistance := math.Abs(float64(originZone-destZone)) + 1
 
-	for courier, services := range PriceTable {
-		for service, pricePerKG := range services {
+	weightKg := math.Ceil(float64(totalWeightG))
+	pricePerKg := basePricePerKg[int(zoneDistance)]
 
-			estimatedDays := EstimatedDaysTable[courier][service]
-			totalCost := pricePerKG * weightKG
+	baseCost := pricePerKg * int64(weightKg)
 
-			options = append(options, ShippingOption{
-				Courier:       courier,
-				ServiceType:   service,
-				WeightKG:      weightKG,
-				PricePerKG:    pricePerKG,
-				TotalCost:     totalCost,
-				EstimatedDays: estimatedDays,
+	var results []ShippingOption
+
+	for _, c := range couriers {
+		for _, s := range c.services {
+			cost := int64(float64(baseCost) * s.multiplier)
+			etd := s.baseETD + etdAdjustment[int(zoneDistance)]
+
+			results = append(results, ShippingOption{
+				Courier:       c.code,
+				Service:       s.name,
+				Cost:          cost,
+				EstimatedDays: etd,
 			})
 		}
 	}
 
-	return options, nil
+	return results
 }

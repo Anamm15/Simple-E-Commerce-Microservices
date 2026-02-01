@@ -9,7 +9,7 @@ func MapToDetailShipmentResponse(shipment *model.Shipment) *shippingpb.ShipmentD
 	orderID := shipment.OrderID.String()
 	return &shippingpb.ShipmentDetail{
 		OrderId:        orderID,
-		TrackingNumber: shipment.TrackingNumber,
+		TrackingNumber: *shipment.TrackingNumber,
 		CourierCode:    shipment.CourierCode,
 		ServiceCode:    shipment.ServiceCode,
 		ShippingCost:   shipment.ShippingCost,

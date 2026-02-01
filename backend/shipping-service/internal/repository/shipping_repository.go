@@ -6,12 +6,13 @@ import (
 
 	"shipping-service/internal/model"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type ShippingRepository interface {
-	GetByID(ctx context.Context, id string) (*model.Shipment, error)
-	GetByOrderID(ctx context.Context, orderID string) (*model.Shipment, error)
+	GetByID(ctx context.Context, id uuid.UUID) (*model.Shipment, error)
+	GetByOrderID(ctx context.Context, orderID uuid.UUID) (*model.Shipment, error)
 	Create(ctx context.Context, shipment *model.Shipment) error
 	Update(ctx context.Context, shipment *model.Shipment) error
 }
@@ -26,7 +27,7 @@ func NewShippingRepository(db *gorm.DB) ShippingRepository {
 
 func (r *shippingRepository) GetByID(
 	ctx context.Context,
-	id string,
+	id uuid.UUID,
 ) (*model.Shipment, error) {
 	var shipment model.Shipment
 
@@ -44,7 +45,7 @@ func (r *shippingRepository) GetByID(
 
 func (r *shippingRepository) GetByOrderID(
 	ctx context.Context,
-	orderID string,
+	orderID uuid.UUID,
 ) (*model.Shipment, error) {
 	var shipment model.Shipment
 
