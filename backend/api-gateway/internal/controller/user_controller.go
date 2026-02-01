@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"api-gateway/internal/dto"
-	"api-gateway/internal/helpers/constants"
+	"api-gateway/internal/helper/constant"
 	userpb "api-gateway/internal/pb/user"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func NewUserController(userClient userpb.UserServiceClient) *UserController {
 }
 
 func (uc *UserController) GetUserProfile(c *gin.Context) {
-	userID := c.GetString("user_id")
+	userID := c.MustGet("user_id").(string)
 
 	grpcReq := &userpb.GetUserProfileRequest{
 		UserId: userID,
@@ -30,24 +30,24 @@ func (uc *UserController) GetUserProfile(c *gin.Context) {
 
 	grpcRes, err := uc.userClient.GetUserProfile(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
 func (uc *UserController) UpdateUserProfile(c *gin.Context) {
 	var req dto.UpdateUserProfileRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	userID := c.GetString("user_id")
+	userID := c.MustGet("user_id").(string)
 
 	grpcReq := &userpb.UpdateUserProfileRequest{
 		UserId:      userID,
@@ -57,24 +57,24 @@ func (uc *UserController) UpdateUserProfile(c *gin.Context) {
 
 	grpcRes, err := uc.userClient.UpdateUserProfile(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgUserUpdated, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgUserUpdated, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
 func (uc *UserController) AddAddress(c *gin.Context) {
 	var req dto.AddAddressRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	userID := c.GetString("user_id")
+	userID := c.MustGet("user_id").(string)
 
 	grpcReq := &userpb.AddAddressRequest{
 		UserId:    userID,
@@ -87,18 +87,18 @@ func (uc *UserController) AddAddress(c *gin.Context) {
 
 	grpcRes, err := uc.userClient.AddAddress(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgAddressAdded, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgAddressAdded, grpcRes)
 	c.JSON(http.StatusCreated, res)
 }
 
 func (uc *UserController) GetAddress(c *gin.Context) {
 	addressID := c.Param("id")
-	userID := c.GetString("user_id")
+	userID := c.MustGet("user_id").(string)
 
 	grpcReq := &userpb.GetAddressRequest{
 		AddressId: addressID,
@@ -107,22 +107,22 @@ func (uc *UserController) GetAddress(c *gin.Context) {
 
 	grpcRes, err := uc.userClient.GetAddress(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
 func (uc *UserController) UpdateAddress(c *gin.Context) {
 	addressID := c.Param("id")
-	userID := c.GetString("user_id")
+	userID := c.MustGet("user_id").(string)
 
 	var req dto.UpdateAddressRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		c.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -139,18 +139,18 @@ func (uc *UserController) UpdateAddress(c *gin.Context) {
 
 	grpcRes, err := uc.userClient.UpdateAddress(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgAddressUpdated, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgAddressUpdated, grpcRes)
 	c.JSON(http.StatusOK, res)
 }
 
 func (uc *UserController) DeleteAddress(c *gin.Context) {
 	addressID := c.Param("id")
-	userID := c.GetString("user_id")
+	userID := c.MustGet("user_id").(string)
 
 	grpcReq := &userpb.DeleteAddressRequest{
 		AddressId: addressID,
@@ -159,11 +159,11 @@ func (uc *UserController) DeleteAddress(c *gin.Context) {
 
 	_, err := uc.userClient.DeleteAddress(c, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgAddressDeleted, nil)
+	res := util.BuildResponseSuccess(constant.MsgAddressDeleted, nil)
 	c.JSON(http.StatusOK, res)
 }

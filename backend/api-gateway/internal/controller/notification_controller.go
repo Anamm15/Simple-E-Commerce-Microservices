@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"api-gateway/internal/dto"
-	"api-gateway/internal/helpers/constants"
+	"api-gateway/internal/helper/constant"
 	notificationpb "api-gateway/internal/pb/notification"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,32 +24,33 @@ func NewNotificationController(notificationClient notificationpb.NotificationSer
 func (nc *NotificationController) GetNotifications(ctx *gin.Context) {
 	var req dto.GetNotificationsRequestDTO
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	grpcReq := &notificationpb.GetNotificationsRequest{
 		UserId: userID,
 		Page:   req.Page,
 		Limit:  req.Limit,
+		Sort:   req.Sort,
 	}
 
 	grpcRes, err := nc.notificationClient.GetNotifications(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (nc *NotificationController) MarkAsRead(ctx *gin.Context) {
 	notificationID := ctx.Param("id")
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 
 	grpcReq := &notificationpb.MarkAsReadRequest{
 		NotificationId: notificationID,
@@ -58,19 +59,19 @@ func (nc *NotificationController) MarkAsRead(ctx *gin.Context) {
 
 	_, err := nc.notificationClient.MarkAsRead(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (nc *NotificationController) SendNotification(ctx *gin.Context) {
 	var req dto.SendNotificationRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -84,11 +85,11 @@ func (nc *NotificationController) SendNotification(ctx *gin.Context) {
 
 	_, err := nc.notificationClient.SendNotification(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }

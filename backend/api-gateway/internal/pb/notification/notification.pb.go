@@ -129,6 +129,7 @@ type GetNotificationsRequest struct {
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Sort          string                 `protobuf:"bytes,4,opt,name=sort,proto3" json:"sort,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -184,10 +185,17 @@ func (x *GetNotificationsRequest) GetLimit() int32 {
 	return 0
 }
 
+func (x *GetNotificationsRequest) GetSort() string {
+	if x != nil {
+		return x.Sort
+	}
+	return ""
+}
+
 type NotificationList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Notifications []*Notification        `protobuf:"bytes,1,rep,name=notifications,proto3" json:"notifications,omitempty"`
-	UnreadCount   int32                  `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
+	UnreadCount   int64                  `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -229,7 +237,7 @@ func (x *NotificationList) GetNotifications() []*Notification {
 	return nil
 }
 
-func (x *NotificationList) GetUnreadCount() int32 {
+func (x *NotificationList) GetUnreadCount() int64 {
 	if x != nil {
 		return x.UnreadCount
 	}
@@ -373,14 +381,15 @@ const file_proto_notification_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"action_url\x18\b \x01(\tR\tactionUrl\"\\\n" +
+	"action_url\x18\b \x01(\tR\tactionUrl\"p\n" +
 	"\x17GetNotificationsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\"w\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x12\n" +
+	"\x04sort\x18\x04 \x01(\tR\x04sort\"w\n" +
 	"\x10NotificationList\x12@\n" +
 	"\rnotifications\x18\x01 \x03(\v2\x1a.notification.NotificationR\rnotifications\x12!\n" +
-	"\funread_count\x18\x02 \x01(\x05R\vunreadCount\"U\n" +
+	"\funread_count\x18\x02 \x01(\x03R\vunreadCount\"U\n" +
 	"\x11MarkAsReadRequest\x12'\n" +
 	"\x0fnotification_id\x18\x01 \x01(\tR\x0enotificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"v\n" +

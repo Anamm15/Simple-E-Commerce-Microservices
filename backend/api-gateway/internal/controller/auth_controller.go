@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"api-gateway/internal/dto"
-	"api-gateway/internal/helpers/constants"
+	"api-gateway/internal/helper/constant"
 	authpb "api-gateway/internal/pb/auth"
-	"api-gateway/internal/utils"
+	"api-gateway/pkg/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func NewAuthController(userClient authpb.AuthServiceClient) *AuthController {
 func (c *AuthController) Register(ctx *gin.Context) {
 	var req dto.RegisterRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -37,19 +37,19 @@ func (c *AuthController) Register(ctx *gin.Context) {
 
 	grpcRes, err := c.UserClient.Register(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgRegisterSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgRegisterSuccess, grpcRes)
 	ctx.JSON(http.StatusCreated, res)
 }
 
 func (c *AuthController) Login(ctx *gin.Context) {
 	var req dto.LoginRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -61,13 +61,13 @@ func (c *AuthController) Login(ctx *gin.Context) {
 
 	grpcRes, err := c.UserClient.Login(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidCredentials, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidCredentials, err.Error(), nil)
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
 
 	ctx.SetCookie("refresh_token", grpcRes.RefreshToken, 7*24*3600, "/", "", false, true)
-	res := utils.BuildResponseSuccess(constants.MsgLoginSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgLoginSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -81,7 +81,7 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 	}
 
 	if refreshToken == "" {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, "Refresh token is missing", nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, "Refresh token is missing", nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -92,7 +92,7 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 
 	grpcRes, err := c.UserClient.RefreshToken(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
@@ -101,28 +101,28 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 		ctx.SetCookie("refresh_token", grpcRes.RefreshToken, 7*24*3600, "/", "", false, true)
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, grpcRes)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *AuthController) Logout(ctx *gin.Context) {
 	ctx.SetCookie("refresh_token", "", -1, "/", "", false, true)
 
-	res := utils.BuildResponseSuccess(constants.MsgLogoutSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgLogoutSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *AuthController) ChangePassword(ctx *gin.Context) {
 	var req dto.ChangePasswordRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
-	userID := ctx.GetString("user_id")
+	userID := ctx.MustGet("user_id").(string)
 	if userID == "" {
-		res := utils.BuildResponseFailed(constants.MsgUnauthorized, "User ID not found in context", nil)
+		res := util.BuildResponseFailed(constant.MsgUnauthorized, "User ID not found in context", nil)
 		ctx.JSON(http.StatusUnauthorized, res)
 		return
 	}
@@ -135,19 +135,19 @@ func (c *AuthController) ChangePassword(ctx *gin.Context) {
 
 	_, err := c.UserClient.ChangePassword(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *AuthController) ResetPassword(ctx *gin.Context) {
 	var req dto.ResetPasswordRequestDTO
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInvalidRequest, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
@@ -159,11 +159,11 @@ func (c *AuthController) ResetPassword(ctx *gin.Context) {
 
 	_, err := c.UserClient.ResetPassword(ctx, grpcReq)
 	if err != nil {
-		res := utils.BuildResponseFailed(constants.MsgInternalServerError, err.Error(), nil)
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
 		ctx.JSON(http.StatusInternalServerError, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(constants.MsgSuccess, nil)
+	res := util.BuildResponseSuccess(constant.MsgSuccess, nil)
 	ctx.JSON(http.StatusOK, res)
 }
