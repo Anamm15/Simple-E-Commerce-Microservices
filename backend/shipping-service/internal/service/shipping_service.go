@@ -8,7 +8,7 @@ import (
 	"shipping-service/internal/helper/mapper"
 	shippingpb "shipping-service/internal/pb/shipping"
 	"shipping-service/internal/repository"
-	"shipping-service/internal/util"
+	"shipping-service/pkg/util"
 )
 
 type ShippingService interface {

@@ -2,7 +2,7 @@ package dto
 
 import (
 	"shipping-service/internal/model"
-	"shipping-service/internal/util"
+	"shipping-service/pkg/util"
 )
 
 type CalculateShippingCostRequestDTO struct {

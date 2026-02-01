@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -8,6 +9,8 @@ import (
 
 	"shipping-service/internal/config"
 	"shipping-service/internal/controller"
+	"shipping-service/internal/infrastructure/dbms"
+	"shipping-service/internal/infrastructure/kafka"
 	"shipping-service/internal/repository"
 	"shipping-service/internal/service"
 
@@ -30,8 +33,52 @@ func main() {
 		_ = godotenv.Load(".env")
 	}
 
+	// 🔹 Initialize Root Context for Graceful Shutdown
+	// This context manages the lifecycle of background processes (like the Kafka Consumer).
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// 🔹 Connecting to database
-	db := config.ConnectDatabase()
+	db := dbms.ConnectDatabase()
+
+	// 🔹 Load kafka configuration
+	kafkaConfig := config.LoadKafkaConfig()
+
+	// 🔹 Initializing Kafka producer
+	producer, err := kafka.NewProducer(kafkaConfig.KafkaBrokers)
+	if err != nil {
+		log.Fatalf("Failed to initialize kafka producer: %v", err)
+	}
+	// Ensure producer is closed upon application exit
+	defer func() {
+		log.Println("Closing Kafka Producer connection...")
+		producer.Close()
+	}()
+
+	// 🔹 Initializing Kafka consumer
+	consumer := kafka.NewConsumer(kafkaConfig.KafkaBrokers)
+
+	// 🔹 Spawn Kafka Consumer (Asynchronous Worker)
+	// Running in a separate goroutine to avoid blocking the main thread.
+	go func() {
+		log.Println("🎧 Kafka Consumer Worker started...")
+
+		// Define the MessageHandler closure
+		messageHandler := func(ctx context.Context, key []byte, value []byte) error {
+			log.Printf("📥 Inbound Message - Key: %s, Payload Size: %d bytes", string(key), len(value))
+
+			// TODO: Invoke service layer to process the payload
+			// return paymentService.ProcessEvent(ctx, value)
+			return nil
+		}
+
+		// Start consuming from the 'orders' topic within the 'payment-service-group'
+		// This block blocks until the context is canceled or an error occurs.
+		err := consumer.StartConsumerGroup(ctx, "payment-service-group", []string{"orders"}, messageHandler)
+		if err != nil {
+			log.Printf("❌ Consumer Group terminated abruptly: %v", err)
+		}
+	}()
 
 	// 🔹 Initializing repository, service, and controller
 	shippingRepository := repository.NewShippingRepository(db)
