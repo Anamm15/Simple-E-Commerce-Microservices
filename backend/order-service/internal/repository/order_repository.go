@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"order-service/internal/helper"
+	"order-service/internal/helper/enum"
 	"order-service/internal/model"
 
 	"github.com/google/uuid"
@@ -11,12 +12,13 @@ import (
 )
 
 type OrderRepository interface {
-	GetAll(ctx context.Context, limit *int32, offset *int32, sort *string, filter *string) ([]model.Order, int64, error)
-	GetByUserID(ctx context.Context, userID uuid.UUID, limit *int32, offset *int32, sort *string, filter *string) ([]model.Order, int64, error)
+	GetAll(ctx context.Context, limit *int32, offset *int32, sort *string, filter *enum.OrderStatus) ([]model.Order, int64, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID, limit *int32, offset *int32, sort *string, filter *enum.OrderStatus) ([]model.Order, int64, error)
 	GetByID(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
 	GetDetailOrder(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
 	Create(ctx context.Context, order *model.Order) error
 	Update(ctx context.Context, order *model.Order) error
+	Delete(ctx context.Context, orderID uuid.UUID) error
 }
 
 type orderRepository struct {
@@ -32,7 +34,7 @@ func (r *orderRepository) GetAll(
 	limit *int32,
 	offset *int32,
 	sort *string,
-	filter *string,
+	filter *enum.OrderStatus,
 ) ([]model.Order, int64, error) {
 	var orders []model.Order
 	var totalCount int64
@@ -61,7 +63,7 @@ func (r *orderRepository) GetByUserID(
 	limit *int32,
 	offset *int32,
 	sort *string,
-	filter *string,
+	filter *enum.OrderStatus,
 ) ([]model.Order, int64, error) {
 	var orders []model.Order
 	var totalCount int64
@@ -133,5 +135,14 @@ func (r *orderRepository) Update(
 		Model(&model.Order{}).
 		Where("id = ?", order.ID).
 		Updates(order).
+		Error
+}
+
+func (r *orderRepository) Delete(
+	ctx context.Context,
+	orderID uuid.UUID,
+) error {
+	return r.db.WithContext(ctx).
+		Delete(&model.Order{}, "id = ?", orderID).
 		Error
 }

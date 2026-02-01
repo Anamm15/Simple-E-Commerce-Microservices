@@ -3,6 +3,8 @@ package helper
 import (
 	"strings"
 
+	"order-service/internal/helper/enum"
+
 	"gorm.io/gorm"
 )
 
@@ -11,15 +13,13 @@ func ApplyQueryOptions(
 	limit *int32,
 	offset *int32,
 	sort *string,
-	filter *string,
+	filter *enum.OrderStatus,
 ) *gorm.DB {
 	if filter != nil && *filter != "" {
-		// contoh filter: status
 		db = db.Where("status = ?", *filter)
 	}
 
 	if sort != nil && *sort != "" {
-		// contoh: created_at desc | created_at asc
 		order := strings.ToLower(*sort)
 		if order == "asc" || order == "desc" {
 			db = db.Order("created_at " + order)

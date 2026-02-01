@@ -4,8 +4,13 @@ import (
 	"context"
 
 	"order-service/internal/dto"
+	"order-service/internal/helper/enum"
+	"order-service/internal/helper/mapper"
 	orderpb "order-service/internal/pb/order"
 	"order-service/internal/service"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type orderController struct {
@@ -22,7 +27,7 @@ func (c *orderController) GetAllOrders(ctx context.Context, request *orderpb.Adm
 		Page:      request.Page,
 		Limit:     request.Limit,
 		UserID:    request.UserId,
-		Status:    request.Status,
+		Status:    enum.OrderStatus(request.Status),
 		DateStart: request.DateStart,
 		DateEnd:   request.DateEnd,
 	}
@@ -36,11 +41,16 @@ func (c *orderController) GetAllOrders(ctx context.Context, request *orderpb.Adm
 }
 
 func (c *orderController) GetOrderHistory(ctx context.Context, request *orderpb.GetOrderHistoryRequest) (*orderpb.OrderList, error) {
+	statusFilter, err := mapper.MapProtoOrderStatusToDomain(request.StatusFilter)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
 	input := dto.GetOrderHistoryRequestDTO{
 		UserID:       request.UserId,
 		Page:         request.Page,
 		Limit:        request.Limit,
-		StatusFilter: request.StatusFilter,
+		StatusFilter: statusFilter,
 		Sort:         request.Sort,
 	}
 
@@ -59,21 +69,26 @@ func (c *orderController) GetOrderDetail(ctx context.Context, request *orderpb.G
 func (c *orderController) CreateOrder(ctx context.Context, request *orderpb.CheckoutRequest) (*orderpb.CheckoutResponse, error) {
 	input := dto.CheckoutRequestDTO{
 		UserID:      request.UserId,
-		Address:     request.Address,
+		Email:       request.Email,
+		Address:     mapper.MapAddressProtoToDTO(request.Address),
 		CourierCode: request.CourierCode,
 		ServiceCode: request.ServiceCode,
-		ProductIDs:  request.ProductIds,
+		Products:    mapper.MapProductCheckoutProtoToDTO(request.Products),
 	}
 
 	return c.orderService.Create(ctx, input)
 }
 
 func (c *orderController) UpdateOrderStatus(ctx context.Context, request *orderpb.UpdateStatusRequest) (*orderpb.OrderUpdateResponse, error) {
-	input := dto.UpdateOrderStatusRequestDTO{
-		OrderID:   request.OrderId,
-		NewStatus: request.NewStatus,
-		Notes:     &request.Notes,
+	newStatus, err := mapper.MapProtoOrderStatusToDomain(request.NewStatus)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	input := dto.UpdateOrderStatusRequestDTO{
+		OrderID:   request.OrderId,
+		NewStatus: newStatus,
+		Notes:     &request.Notes,
+	}
 	return c.orderService.Update(ctx, input)
 }

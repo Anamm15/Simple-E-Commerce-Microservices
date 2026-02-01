@@ -74,12 +74,6 @@ func main() {
 		log.Fatalf("Failed to init Shipping Client: %v", err)
 	}
 
-	// Notification Service
-	notifSvc, err := grpc_client.InitNotificationClient(os.Getenv("NOTIFICATION_SERVICE_HOST"), os.Getenv("NOTIFICATION_SERVICE_PORT"))
-	if err != nil {
-		log.Fatalf("Failed to init Notification Client: %v", err)
-	}
-
 	// 🔹 Connecting to database
 	db := dbms.ConnectDatabase()
 
@@ -108,7 +102,6 @@ func main() {
 		paymentSvc.Client,
 		productSvc.Client,
 		shippingSvc.Client,
-		notifSvc.Client,
 	)
 	orderController := controller.NewOrderController(orderService)
 
