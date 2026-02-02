@@ -30,15 +30,15 @@ func main() {
 		env = "development"
 	}
 
-	midtransServerKey := os.Getenv("MIDTRANS_SERVER_KEY")
-	if midtransServerKey == "" {
-		log.Fatal("⚠️ MIDTRANS_SERVER_KEY is not set")
-	}
-
 	envFile := fmt.Sprintf(".env.%s", env)
 	if err := godotenv.Load(envFile); err != nil {
 		log.Printf("⚠️ Cannot load %s, using default .env", envFile)
 		_ = godotenv.Load(".env")
+	}
+
+	midtransServerKey := os.Getenv("MIDTRANS_SERVER_KEY")
+	if midtransServerKey == "" {
+		log.Fatal("⚠️ MIDTRANS_SERVER_KEY is not set")
 	}
 
 	// 🔹 Initialize Root Context for Graceful Shutdown
