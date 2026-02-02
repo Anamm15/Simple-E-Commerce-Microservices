@@ -279,9 +279,7 @@ func (x *ReserveStockRequest) GetItems() []*StockItem {
 
 type ReserveStockResponse struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
-	Success              bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	OutOfStockProductIds []string               `protobuf:"bytes,2,rep,name=out_of_stock_product_ids,json=outOfStockProductIds,proto3" json:"out_of_stock_product_ids,omitempty"`
-	Message              string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -316,25 +314,11 @@ func (*ReserveStockResponse) Descriptor() ([]byte, []int) {
 	return file_proto_inventory_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ReserveStockResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
 func (x *ReserveStockResponse) GetOutOfStockProductIds() []string {
 	if x != nil {
 		return x.OutOfStockProductIds
 	}
 	return nil
-}
-
-func (x *ReserveStockResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
 }
 
 // Update Stock
@@ -394,7 +378,7 @@ func (x *UpdateStockRequest) GetQuantity() int32 {
 type ReleaseStockRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Items         []*StockItem           `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
+	Action        string                 `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -436,11 +420,56 @@ func (x *ReleaseStockRequest) GetOrderId() string {
 	return ""
 }
 
-func (x *ReleaseStockRequest) GetItems() []*StockItem {
+func (x *ReleaseStockRequest) GetAction() string {
 	if x != nil {
-		return x.Items
+		return x.Action
 	}
-	return nil
+	return ""
+}
+
+// Delete stock when product deleted
+type DeleteStockProductRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteStockProductRequest) Reset() {
+	*x = DeleteStockProductRequest{}
+	mi := &file_proto_inventory_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteStockProductRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteStockProductRequest) ProtoMessage() {}
+
+func (x *DeleteStockProductRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_inventory_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteStockProductRequest.ProtoReflect.Descriptor instead.
+func (*DeleteStockProductRequest) Descriptor() ([]byte, []int) {
+	return file_proto_inventory_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DeleteStockProductRequest) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
 }
 
 var File_proto_inventory_proto protoreflect.FileDescriptor
@@ -467,24 +496,26 @@ const file_proto_inventory_proto_rawDesc = "" +
 	"\bquantity\x18\x02 \x01(\x05R\bquantity\"\\\n" +
 	"\x13ReserveStockRequest\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12*\n" +
-	"\x05items\x18\x02 \x03(\v2\x14.inventory.StockItemR\x05items\"\x82\x01\n" +
-	"\x14ReserveStockResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x126\n" +
-	"\x18out_of_stock_product_ids\x18\x02 \x03(\tR\x14outOfStockProductIds\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage\"O\n" +
+	"\x05items\x18\x02 \x03(\v2\x14.inventory.StockItemR\x05items\"N\n" +
+	"\x14ReserveStockResponse\x126\n" +
+	"\x18out_of_stock_product_ids\x18\x02 \x03(\tR\x14outOfStockProductIds\"O\n" +
 	"\x12UpdateStockRequest\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\x05R\bquantity\"\\\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\"H\n" +
 	"\x13ReleaseStockRequest\x12\x19\n" +
-	"\border_id\x18\x01 \x01(\tR\aorderId\x12*\n" +
-	"\x05items\x18\x02 \x03(\v2\x14.inventory.StockItemR\x05items2\xf8\x02\n" +
+	"\border_id\x18\x01 \x01(\tR\aorderId\x12\x16\n" +
+	"\x06action\x18\x02 \x01(\tR\x06action\":\n" +
+	"\x19DeleteStockProductRequest\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\tR\tproductId2\xc7\x03\n" +
 	"\x10InventoryService\x12C\n" +
 	"\vCreateStock\x12\x1d.inventory.CreateStockRequest\x1a\x15.inventory.StockCount\x12A\n" +
 	"\n" +
 	"CheckStock\x12\x1c.inventory.CheckStockRequest\x1a\x15.inventory.StockCount\x12O\n" +
 	"\fReserveStock\x12\x1e.inventory.ReserveStockRequest\x1a\x1f.inventory.ReserveStockResponse\x12C\n" +
-	"\vUpdateStock\x12\x1d.inventory.UpdateStockRequest\x1a\x15.inventory.StockCount\x12F\n" +
+	"\vUpdateStock\x12\x1d.inventory.UpdateStockRequest\x1a\x15.inventory.StockCount\x12M\n" +
+	"\rDeleteProduct\x12$.inventory.DeleteStockProductRequest\x1a\x16.google.protobuf.Empty\x12F\n" +
 	"\fReleaseStock\x12\x1e.inventory.ReleaseStockRequest\x1a\x16.google.protobuf.EmptyB$Z\"/internal/pb/inventory;inventorypbb\x06proto3"
 
 var (
@@ -499,36 +530,38 @@ func file_proto_inventory_proto_rawDescGZIP() []byte {
 	return file_proto_inventory_proto_rawDescData
 }
 
-var file_proto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_inventory_proto_goTypes = []any{
-	(*CheckStockRequest)(nil),    // 0: inventory.CheckStockRequest
-	(*StockCount)(nil),           // 1: inventory.StockCount
-	(*StockItem)(nil),            // 2: inventory.StockItem
-	(*CreateStockRequest)(nil),   // 3: inventory.CreateStockRequest
-	(*ReserveStockRequest)(nil),  // 4: inventory.ReserveStockRequest
-	(*ReserveStockResponse)(nil), // 5: inventory.ReserveStockResponse
-	(*UpdateStockRequest)(nil),   // 6: inventory.UpdateStockRequest
-	(*ReleaseStockRequest)(nil),  // 7: inventory.ReleaseStockRequest
-	(*emptypb.Empty)(nil),        // 8: google.protobuf.Empty
+	(*CheckStockRequest)(nil),         // 0: inventory.CheckStockRequest
+	(*StockCount)(nil),                // 1: inventory.StockCount
+	(*StockItem)(nil),                 // 2: inventory.StockItem
+	(*CreateStockRequest)(nil),        // 3: inventory.CreateStockRequest
+	(*ReserveStockRequest)(nil),       // 4: inventory.ReserveStockRequest
+	(*ReserveStockResponse)(nil),      // 5: inventory.ReserveStockResponse
+	(*UpdateStockRequest)(nil),        // 6: inventory.UpdateStockRequest
+	(*ReleaseStockRequest)(nil),       // 7: inventory.ReleaseStockRequest
+	(*DeleteStockProductRequest)(nil), // 8: inventory.DeleteStockProductRequest
+	(*emptypb.Empty)(nil),             // 9: google.protobuf.Empty
 }
 var file_proto_inventory_proto_depIdxs = []int32{
 	2, // 0: inventory.ReserveStockRequest.items:type_name -> inventory.StockItem
-	2, // 1: inventory.ReleaseStockRequest.items:type_name -> inventory.StockItem
-	3, // 2: inventory.InventoryService.CreateStock:input_type -> inventory.CreateStockRequest
-	0, // 3: inventory.InventoryService.CheckStock:input_type -> inventory.CheckStockRequest
-	4, // 4: inventory.InventoryService.ReserveStock:input_type -> inventory.ReserveStockRequest
-	6, // 5: inventory.InventoryService.UpdateStock:input_type -> inventory.UpdateStockRequest
+	3, // 1: inventory.InventoryService.CreateStock:input_type -> inventory.CreateStockRequest
+	0, // 2: inventory.InventoryService.CheckStock:input_type -> inventory.CheckStockRequest
+	4, // 3: inventory.InventoryService.ReserveStock:input_type -> inventory.ReserveStockRequest
+	6, // 4: inventory.InventoryService.UpdateStock:input_type -> inventory.UpdateStockRequest
+	8, // 5: inventory.InventoryService.DeleteProduct:input_type -> inventory.DeleteStockProductRequest
 	7, // 6: inventory.InventoryService.ReleaseStock:input_type -> inventory.ReleaseStockRequest
 	1, // 7: inventory.InventoryService.CreateStock:output_type -> inventory.StockCount
 	1, // 8: inventory.InventoryService.CheckStock:output_type -> inventory.StockCount
 	5, // 9: inventory.InventoryService.ReserveStock:output_type -> inventory.ReserveStockResponse
 	1, // 10: inventory.InventoryService.UpdateStock:output_type -> inventory.StockCount
-	8, // 11: inventory.InventoryService.ReleaseStock:output_type -> google.protobuf.Empty
-	7, // [7:12] is the sub-list for method output_type
-	2, // [2:7] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	9, // 11: inventory.InventoryService.DeleteProduct:output_type -> google.protobuf.Empty
+	9, // 12: inventory.InventoryService.ReleaseStock:output_type -> google.protobuf.Empty
+	7, // [7:13] is the sub-list for method output_type
+	1, // [1:7] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_inventory_proto_init() }
@@ -542,7 +575,7 @@ func file_proto_inventory_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_inventory_proto_rawDesc), len(file_proto_inventory_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

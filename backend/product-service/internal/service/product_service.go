@@ -98,7 +98,7 @@ func (r *productService) CreateProduct(ctx context.Context, request dto.CreatePr
 	uniqueFileName := helper.GenerateRandomFilename()
 	fileReader := util.ByteToIOReader(request.Thumbnail.Data)
 
-	fileUrl, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
+	fileUrl, thumbnailPublicID, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
 	if err != nil {
 		return nil, err
 	}
@@ -109,14 +109,14 @@ func (r *productService) CreateProduct(ctx context.Context, request dto.CreatePr
 		uniqueFileName := helper.GenerateRandomFilename()
 		fileReader := util.ByteToIOReader(image.Data)
 
-		fileUrl, err = r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
+		fileUrl, publicID, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
 		if err != nil {
 			return nil, err
 		}
-		additionalImages = append(additionalImages, model.Image{URL: fileUrl})
+		additionalImages = append(additionalImages, model.Image{URL: fileUrl, PublicID: publicID})
 	}
 
-	product := request.ToModel(fileUrl, additionalImages)
+	product := request.ToModel(fileUrl, thumbnailPublicID, additionalImages)
 	err = r.productRepository.CreateProduct(ctx, product)
 	if err != nil {
 		return nil, err
@@ -140,7 +140,12 @@ func (r *productService) UpdateThumbnailProduct(ctx context.Context, request dto
 		return nil, err
 	}
 
-	err = r.cloudStorage.DeleteFile(ctx, request.Image.Filename)
+	product, err := r.productRepository.GetProductByID(ctx, productID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.cloudStorage.DeleteFile(ctx, product.ThumbnailPublicID)
 	if err != nil {
 		return nil, err
 	}
@@ -148,12 +153,12 @@ func (r *productService) UpdateThumbnailProduct(ctx context.Context, request dto
 	uniqueFileName := helper.GenerateRandomFilename()
 	fileReader := util.ByteToIOReader(request.Image.Data)
 
-	fileUrl, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
+	fileUrl, publicID, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
 	if err != nil {
 		return nil, err
 	}
 
-	err = r.productRepository.UpdateThumnailProduct(ctx, productID, fileUrl)
+	err = r.productRepository.UpdateThumnailProduct(ctx, productID, fileUrl, publicID)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +208,25 @@ func (r *productService) DeleteProduct(ctx context.Context, productID string) er
 		return err
 	}
 
+	product, err := r.productRepository.GetProductByID(ctx, productIDParsed)
+	if err != nil {
+		return err
+	}
+
 	err = r.productRepository.DeleteProduct(ctx, productIDParsed)
+	if err != nil {
+		return err
+	}
+
+	err = r.cloudStorage.DeleteFile(ctx, product.ThumbnailPublicID)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.inventoryClient.DeleteProduct(ctx, &inventorypb.DeleteStockProductRequest{
+		ProductId: productID,
+	})
+
 	if err != nil {
 		return err
 	}

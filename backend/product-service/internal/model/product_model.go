@@ -12,9 +12,10 @@ type Product struct {
 	Name        string `gorm:"type:varchar(150);not null" json:"name"`
 	Description string `gorm:"type:text" json:"description"`
 
-	Price     int64  `gorm:"not null" json:"price"`
-	WeightG   int32  `gorm:"not null" json:"weight_g"`
-	Thumbnail string `gorm:"type:text" json:"thumbnail"`
+	Price             int64  `gorm:"not null" json:"price"`
+	WeightG           int32  `gorm:"not null" json:"weight_g"`
+	Thumbnail         string `gorm:"type:text" json:"thumbnail"`
+	ThumbnailPublicID string `gorm:"type:text" json:"thumbnail_public_id"`
 
 	Images     []Image    `gorm:"foreignKey:ProductID" json:"images"`
 	Reviews    []Review   `gorm:"foreignKey:ProductID" json:"reviews"`
