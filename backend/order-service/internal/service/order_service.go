@@ -53,8 +53,10 @@ func NewOrderService(
 }
 
 func (s *orderService) GetAll(ctx context.Context, request dto.AdminOrderFilterRequestDTO) (*orderpb.OrderList, error) {
-	offset := helper.CalculateOffset(&request.Page, &request.Limit)
-	orders, totalCount, err := s.orderRepo.GetAll(ctx, &request.Limit, &offset, nil, &request.Status)
+	page, limit, _, filter := helper.QueryValidation(&request.Page, &request.Limit, nil, &request.Status)
+
+	offset := helper.CalculateOffset(page, limit)
+	orders, totalCount, err := s.orderRepo.GetAll(ctx, limit, offset, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +69,15 @@ func (s *orderService) GetAll(ctx context.Context, request dto.AdminOrderFilterR
 }
 
 func (s *orderService) GetByUserID(ctx context.Context, request dto.GetOrderHistoryRequestDTO) (*orderpb.OrderList, error) {
-	offset := helper.CalculateOffset(&request.Page, &request.Limit)
+	page, limit, sort, filter := helper.QueryValidation(&request.Page, &request.Limit, &request.Sort, &request.StatusFilter)
+
+	offset := helper.CalculateOffset(page, limit)
 	userID, err := util.StringToUUID(request.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	orders, totalCount, err := s.orderRepo.GetByUserID(ctx, userID, &request.Limit, &offset, &request.Sort, &request.StatusFilter)
+	orders, totalCount, err := s.orderRepo.GetByUserID(ctx, userID, limit, offset, sort, filter)
 	if err != nil {
 		return nil, err
 	}
