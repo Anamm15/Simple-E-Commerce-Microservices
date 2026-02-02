@@ -48,6 +48,5 @@ func (dto *RegisterRequestDTO) ToModel() *model.Account {
 	return &model.Account{
 		Email:    dto.Email,
 		Username: dto.Username,
-		Password: dto.Password,
 	}
 }
