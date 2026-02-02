@@ -35,6 +35,20 @@ func (c *userController) GetUserProfile(ctx context.Context, req *userpb.GetUser
 	return user, nil
 }
 
+func (c *userController) CreateUserProfile(ctx context.Context, req *userpb.CreateProfileRequest) (*userpb.CreateProfileResponse, error) {
+	input := dto.CreateProfileRequestDTO{
+		FullName:    req.FullName,
+		PhoneNumber: req.PhoneNumber,
+	}
+
+	newUser, err := c.userService.Create(ctx, input)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to create profile: %v", err)
+	}
+
+	return newUser, nil
+}
+
 func (c *userController) UpdateUserProfile(ctx context.Context, req *userpb.UpdateUserProfileRequest) (*userpb.UserProfile, error) {
 	input := dto.UpdateUserProfileRequestDTO{
 		UserID:      req.UserId,

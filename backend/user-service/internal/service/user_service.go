@@ -5,7 +5,6 @@ import (
 
 	"user-service/internal/dto"
 	"user-service/internal/helper/mapper"
-	"user-service/internal/model"
 	userpb "user-service/internal/pb/user"
 	"user-service/internal/repository"
 	"user-service/pkg/util"
@@ -16,7 +15,7 @@ import (
 type UserService interface {
 	GetAll(ctx context.Context) ([]userpb.UserProfile, error)
 	GetByID(ctx context.Context, id string) (*userpb.UserProfile, error)
-	Create(ctx context.Context, user *model.User) error
+	Create(ctx context.Context, req dto.CreateProfileRequestDTO) (*userpb.CreateProfileResponse, error)
 	Update(ctx context.Context, req dto.UpdateUserProfileRequestDTO) (*userpb.UserProfile, error)
 }
 
@@ -53,8 +52,18 @@ func (s *userService) GetByID(ctx context.Context, id string) (*userpb.UserProfi
 	return profile, nil
 }
 
-func (s *userService) Create(ctx context.Context, user *model.User) error {
-	return s.userRepo.Create(ctx, user)
+func (s *userService) Create(ctx context.Context, req dto.CreateProfileRequestDTO) (*userpb.CreateProfileResponse, error) {
+	user := req.ToModel()
+	err := s.userRepo.Create(ctx, user)
+	if err != nil {
+		return &userpb.CreateProfileResponse{}, err
+	}
+
+	return &userpb.CreateProfileResponse{
+		Id:          user.ID.String(),
+		FullName:    user.FullName,
+		PhoneNumber: user.PhoneNumber,
+	}, nil
 }
 
 func (s *userService) Update(ctx context.Context, req dto.UpdateUserProfileRequestDTO) (*userpb.UserProfile, error) {
