@@ -37,7 +37,7 @@ func (r *shippingRepository) GetByID(
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
 	}
 
 	return &shipment, err
@@ -56,7 +56,7 @@ func (r *shippingRepository) GetByOrderID(
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
 	}
 
 	return &shipment, err
