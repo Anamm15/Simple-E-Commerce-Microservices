@@ -13,6 +13,7 @@ import (
 type AccountRepository interface {
 	Create(ctx context.Context, account *model.Account) error
 	FindByID(ctx context.Context, id uuid.UUID) (*model.Account, error)
+	FindByUserID(ctx context.Context, userID uuid.UUID) (*model.Account, error)
 	FindByEmail(ctx context.Context, email string) (*model.Account, error)
 	FindByUsername(ctx context.Context, username string) (*model.Account, error)
 	Update(ctx context.Context, account *model.Account) error
@@ -43,7 +44,7 @@ func (r *accountRepository) FindByID(ctx context.Context, id uuid.UUID) (*model.
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
 	}
 
 	return &account, err
@@ -59,7 +60,7 @@ func (r *accountRepository) FindByEmail(ctx context.Context, email string) (*mod
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
 	}
 
 	return &account, err
@@ -75,7 +76,23 @@ func (r *accountRepository) FindByUsername(ctx context.Context, username string)
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
+	}
+
+	return &account, err
+}
+
+func (r *accountRepository) FindByUserID(ctx context.Context, userID uuid.UUID) (*model.Account, error) {
+	var account model.Account
+
+	err := r.db.
+		WithContext(ctx).
+		Where("user_id = ?", userID).
+		First(&account).
+		Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
 	}
 
 	return &account, err

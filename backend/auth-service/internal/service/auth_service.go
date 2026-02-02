@@ -12,6 +12,8 @@ import (
 	authpb "auth-service/internal/pb/auth"
 	"auth-service/internal/repository"
 	"auth-service/pkg/util"
+
+	"github.com/google/uuid"
 )
 
 type AuthService interface {
@@ -38,8 +40,17 @@ func NewAuthService(
 }
 
 func (s *authService) Register(ctx context.Context, req dto.RegisterRequestDTO) (dto.AccountResponseDTO, error) {
+	hashedPassword, err := util.HashPassword(req.Password)
+	if err != nil {
+		return dto.AccountResponseDTO{}, err
+	}
+
+	newUserID := uuid.New()
 	account := req.ToModel()
-	err := s.authRepo.Create(ctx, account)
+	account.UserID = newUserID
+	account.Password = hashedPassword
+
+	err = s.authRepo.Create(ctx, account)
 	if err != nil {
 		return dto.AccountResponseDTO{}, err
 	}
@@ -58,19 +69,34 @@ func (s *authService) Login(ctx context.Context, req dto.LoginRequestDTO) (*auth
 		return &authpb.LoginResponse{}, constant.ErrInvalidCredentials
 	}
 
-	accessToken, err := util.GenerateJWT(account.ID, account.Email, account.Role)
+	accessToken, err := util.GenerateJWT(account.UserID, account.Email, account.Role)
 	if err != nil {
 		return &authpb.LoginResponse{}, err
 	}
 
-	refreshToken, err := util.GenerateRandomString(32)
+	refreshTokenStr, err := util.GenerateRandomString(32)
 	if err != nil {
 		return &authpb.LoginResponse{}, err
+	}
+
+	familyID := uuid.New()
+
+	refreshToken := model.RefreshToken{
+		UserID:    account.UserID,
+		Token:     refreshTokenStr,
+		FamilyID:  familyID,
+		IsUsed:    false,
+		IsRevoked: false,
+		ExpiresAt: time.Now().Add(7 * 24 * time.Hour),
+	}
+
+	if err := s.refreshTokenRepo.Create(ctx, &refreshToken); err != nil {
+		return nil, err
 	}
 
 	return &authpb.LoginResponse{
 		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		RefreshToken: refreshTokenStr,
 		ExpiresIn:    24 * 60 * 60,
 	}, nil
 }
@@ -94,7 +120,7 @@ func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (*a
 		return &authpb.TokenResponse{}, errors.New("token expired")
 	}
 
-	account, err := s.authRepo.FindByID(ctx, storedToken.UserID)
+	account, err := s.authRepo.FindByUserID(ctx, storedToken.UserID)
 	if err != nil {
 		return &authpb.TokenResponse{}, err
 	}
