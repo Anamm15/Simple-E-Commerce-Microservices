@@ -37,7 +37,7 @@ func (r *cartRepository) GetCart(ctx context.Context, userID string) ([]model.Ca
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return []model.CartItem{}, nil
 	}
 
 	return item, err
