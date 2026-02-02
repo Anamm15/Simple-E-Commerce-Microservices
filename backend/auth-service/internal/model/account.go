@@ -14,7 +14,7 @@ type Account struct {
 	Email      string           `gorm:"uniqueIndex;not null"`
 	Username   string           `gorm:"uniqueIndex;not null"`
 	Password   string           `gorm:"not null"`
-	Role       enum.AccountRole `gorm:"not null default:'user'"`
+	Role       enum.AccountRole `gorm:"not null default:'USER'"`
 	IsVerified bool             `gorm:"not null default:false"`
 	CreatedAt  time.Time        `gorm:"autoCreateTime"`
 }

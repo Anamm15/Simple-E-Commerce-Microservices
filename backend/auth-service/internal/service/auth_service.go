@@ -165,7 +165,7 @@ func (s *authService) ChangePassword(ctx context.Context, req dto.ChangePassword
 		return err
 	}
 
-	account, err := s.authRepo.FindByID(ctx, userID)
+	account, err := s.authRepo.FindByUserID(ctx, userID)
 	if err != nil {
 		return err
 	}
