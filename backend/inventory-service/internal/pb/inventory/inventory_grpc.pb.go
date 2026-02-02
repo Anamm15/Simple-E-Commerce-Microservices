@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InventoryService_CreateStock_FullMethodName  = "/inventory.InventoryService/CreateStock"
-	InventoryService_CheckStock_FullMethodName   = "/inventory.InventoryService/CheckStock"
-	InventoryService_ReserveStock_FullMethodName = "/inventory.InventoryService/ReserveStock"
-	InventoryService_UpdateStock_FullMethodName  = "/inventory.InventoryService/UpdateStock"
-	InventoryService_ReleaseStock_FullMethodName = "/inventory.InventoryService/ReleaseStock"
+	InventoryService_CreateStock_FullMethodName   = "/inventory.InventoryService/CreateStock"
+	InventoryService_CheckStock_FullMethodName    = "/inventory.InventoryService/CheckStock"
+	InventoryService_ReserveStock_FullMethodName  = "/inventory.InventoryService/ReserveStock"
+	InventoryService_UpdateStock_FullMethodName   = "/inventory.InventoryService/UpdateStock"
+	InventoryService_DeleteProduct_FullMethodName = "/inventory.InventoryService/DeleteProduct"
+	InventoryService_ReleaseStock_FullMethodName  = "/inventory.InventoryService/ReleaseStock"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
@@ -35,6 +36,7 @@ type InventoryServiceClient interface {
 	CheckStock(ctx context.Context, in *CheckStockRequest, opts ...grpc.CallOption) (*StockCount, error)
 	ReserveStock(ctx context.Context, in *ReserveStockRequest, opts ...grpc.CallOption) (*ReserveStockResponse, error)
 	UpdateStock(ctx context.Context, in *UpdateStockRequest, opts ...grpc.CallOption) (*StockCount, error)
+	DeleteProduct(ctx context.Context, in *DeleteStockProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ReleaseStock(ctx context.Context, in *ReleaseStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -86,6 +88,16 @@ func (c *inventoryServiceClient) UpdateStock(ctx context.Context, in *UpdateStoc
 	return out, nil
 }
 
+func (c *inventoryServiceClient) DeleteProduct(ctx context.Context, in *DeleteStockProductRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, InventoryService_DeleteProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *inventoryServiceClient) ReleaseStock(ctx context.Context, in *ReleaseStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -104,6 +116,7 @@ type InventoryServiceServer interface {
 	CheckStock(context.Context, *CheckStockRequest) (*StockCount, error)
 	ReserveStock(context.Context, *ReserveStockRequest) (*ReserveStockResponse, error)
 	UpdateStock(context.Context, *UpdateStockRequest) (*StockCount, error)
+	DeleteProduct(context.Context, *DeleteStockProductRequest) (*emptypb.Empty, error)
 	ReleaseStock(context.Context, *ReleaseStockRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
@@ -126,6 +139,9 @@ func (UnimplementedInventoryServiceServer) ReserveStock(context.Context, *Reserv
 }
 func (UnimplementedInventoryServiceServer) UpdateStock(context.Context, *UpdateStockRequest) (*StockCount, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateStock not implemented")
+}
+func (UnimplementedInventoryServiceServer) DeleteProduct(context.Context, *DeleteStockProductRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
 }
 func (UnimplementedInventoryServiceServer) ReleaseStock(context.Context, *ReleaseStockRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReleaseStock not implemented")
@@ -223,6 +239,24 @@ func _InventoryService_UpdateStock_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventoryService_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteStockProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).DeleteProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_DeleteProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).DeleteProduct(ctx, req.(*DeleteStockProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _InventoryService_ReleaseStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReleaseStockRequest)
 	if err := dec(in); err != nil {
@@ -263,6 +297,10 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateStock",
 			Handler:    _InventoryService_UpdateStock_Handler,
+		},
+		{
+			MethodName: "DeleteProduct",
+			Handler:    _InventoryService_DeleteProduct_Handler,
 		},
 		{
 			MethodName: "ReleaseStock",

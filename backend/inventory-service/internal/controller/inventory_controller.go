@@ -77,3 +77,12 @@ func (c *InventoryController) ReleaseStock(ctx context.Context, request *invento
 
 	return &emptypb.Empty{}, nil
 }
+
+func (c *InventoryController) DeleteProduct(ctx context.Context, request *inventorypb.DeleteStockProductRequest) (*emptypb.Empty, error) {
+	err := c.InventoryService.DeleteProduct(ctx, request.ProductId)
+	if err != nil {
+		return &emptypb.Empty{}, err
+	}
+
+	return &emptypb.Empty{}, nil
+}

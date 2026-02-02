@@ -24,6 +24,7 @@ type InventoryService interface {
 	ReserveStock(ctx context.Context, request dto.ReserveStockRequestDTO) (*inventorypb.ReserveStockResponse, error)
 	UpdateStock(ctx context.Context, request dto.UpdateStockRequestDTO) (*inventorypb.StockCount, error)
 	ReleaseStock(ctx context.Context, request dto.ReleaseStockRequestDTO) error
+	DeleteProduct(ctx context.Context, productID string) error
 }
 
 type inventoryService struct {
@@ -288,6 +289,20 @@ func (s *inventoryService) ReleaseStock(ctx context.Context, request dto.Release
 
 	// 8. Commit
 	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *inventoryService) DeleteProduct(ctx context.Context, productID string) error {
+	productIDParsed, err := util.StringToUUID(productID)
+	if err != nil {
+		return err
+	}
+
+	err = s.inventoryRepo.Delete(ctx, productIDParsed)
+	if err != nil {
 		return err
 	}
 
