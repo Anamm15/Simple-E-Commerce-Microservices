@@ -8,8 +8,8 @@ import (
 )
 
 func RegisterInventoryRoutes(router *gin.RouterGroup, inventoryController *controller.InventoryController) {
-	inventoryGroup := router.Group("/inventory", middleware.Authenticate(), middleware.AuthorizeRole("ADMIN"))
+	inventoryGroup := router.Group("/inventories", middleware.Authenticate(), middleware.AuthorizeRole("ADMIN"))
 	{
-		inventoryGroup.PUT("/stock", inventoryController.UpdateStock)
+		inventoryGroup.PATCH("/stock", inventoryController.UpdateStock)
 	}
 }

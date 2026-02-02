@@ -18,6 +18,6 @@ func RegisterOrderRoutes(router *gin.RouterGroup, orderController *controller.Or
 	adminOrderGroup := router.Group("/admin/orders", middleware.Authenticate(), middleware.AuthorizeRole("ADMIN"))
 	{
 		adminOrderGroup.GET("", orderController.GetAllOrders)
-		adminOrderGroup.PUT("/:id/status", orderController.UpdateOrderStatus)
+		adminOrderGroup.PATCH("/:id/status", orderController.UpdateOrderStatus)
 	}
 }

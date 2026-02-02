@@ -219,7 +219,6 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 
 	grpcReq := &productpb.UpdateProductRequest{
 		Id:          productID,
-		Categories:  req.Categories,
 		Name:        req.Name,
 		Description: req.Description,
 		Price:       req.Price,

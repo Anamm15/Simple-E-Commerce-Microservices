@@ -11,14 +11,15 @@ func RegisterUserRoutes(router *gin.RouterGroup, userController *controller.User
 	userGroup := router.Group("/users", middleware.Authenticate())
 	{
 		userGroup.GET("/profile", userController.GetUserProfile)
+		userGroup.POST("", userController.CreateProfile)
 		userGroup.PUT("/profile", userController.UpdateUserProfile)
 
 		addressGroup := userGroup.Group("/addresses")
 		{
 			addressGroup.POST("/", userController.AddAddress)
-			addressGroup.GET("/:address_id", userController.GetAddress)
-			addressGroup.PUT("/:address_id", userController.UpdateAddress)
-			addressGroup.DELETE("/:address_id", userController.DeleteAddress)
+			addressGroup.GET("/:id", userController.GetAddress)
+			addressGroup.PUT("/:id", userController.UpdateAddress)
+			addressGroup.DELETE("/:id", userController.DeleteAddress)
 		}
 	}
 }

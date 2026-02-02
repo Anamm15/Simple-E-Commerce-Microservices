@@ -39,6 +39,30 @@ func (uc *UserController) GetUserProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+func (uc *UserController) CreateProfile(c *gin.Context) {
+	var req dto.CreateUserProfileRequestDTO
+	if err := c.ShouldBindJSON(&req); err != nil {
+		res := util.BuildResponseFailed(constant.MsgInvalidRequest, err.Error(), nil)
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	grpcReq := &userpb.CreateProfileRequest{
+		FullName:    req.FullName,
+		PhoneNumber: req.PhoneNumber,
+	}
+
+	grpcRes, err := uc.userClient.CreateProfile(c, grpcReq)
+	if err != nil {
+		res := util.BuildResponseFailed(constant.MsgInternalServerError, err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	res := util.BuildResponseSuccess(constant.MsgSuccess, grpcRes)
+	c.JSON(http.StatusOK, res)
+}
+
 func (uc *UserController) UpdateUserProfile(c *gin.Context) {
 	var req dto.UpdateUserProfileRequestDTO
 	if err := c.ShouldBindJSON(&req); err != nil {

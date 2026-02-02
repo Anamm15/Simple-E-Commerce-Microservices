@@ -10,20 +10,19 @@ type SearchProductRequestDTO struct {
 }
 
 type CreateProductRequestDTO struct {
-	Categories   []string `json:"category" binding:"required"`
-	Name         string   `json:"name" binding:"required,min=3"`
-	Description  string   `json:"description" binding:"required"`
-	Price        int64    `json:"price" binding:"required,min=100"`
-	WeightG      int32    `json:"weight_g" binding:"required,min=1"`
-	InitialStock int32    `json:"initial_stock" binding:"required,min=0"`
+	Categories   []string `form:"category" binding:"required"`
+	Name         string   `form:"name" binding:"required,min=3"`
+	Description  string   `form:"description" binding:"required"`
+	Price        int64    `form:"price" binding:"required,min=100"`
+	WeightG      int32    `form:"weight_g" binding:"required,min=1"`
+	InitialStock int32    `form:"initial_stock" binding:"required,min=0"`
 }
 
 type UpdateProductRequestDTO struct {
-	Categories  []string `json:"category"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Price       int64    `json:"price" binding:"required,min=100"`
-	WeightG     int32    `json:"weight_g" binding:"required,min=1"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Price       int64  `json:"price"`
+	WeightG     int32  `json:"weight_g"`
 }
 
 type GetProductBatchRequestDTO struct {
