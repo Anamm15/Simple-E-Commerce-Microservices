@@ -40,7 +40,7 @@ func (r *inventoryRepository) GetByProductID(
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
 	}
 
 	return &inventory, err
@@ -82,7 +82,7 @@ func (r *inventoryRepository) Update(
 		Model(&model.Inventory{}).
 		Where("product_id = ?", inventory.ProductID).
 		Updates(map[string]interface{}{
-			"stock": inventory.TotalStock,
+			"total_stock": inventory.TotalStock,
 		}).
 		Error
 }
@@ -96,7 +96,7 @@ func (r *inventoryRepository) UpdateWithTx(
 		Model(&model.Inventory{}).
 		Where("product_id = ?", inventory.ProductID).
 		Updates(map[string]interface{}{
-			"stock": inventory.TotalStock,
+			"total_stock": inventory.TotalStock,
 		}).
 		Error
 }
