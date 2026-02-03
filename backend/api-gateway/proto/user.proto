@@ -9,6 +9,7 @@ import "google/protobuf/empty.proto";
 
 service UserService {
   rpc GetUserProfile(GetUserProfileRequest) returns (UserProfile);
+  rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
   rpc UpdateUserProfile(UpdateUserProfileRequest) returns (UserProfile);
   rpc AddAddress(AddAddressRequest) returns (AddressResponse);
   rpc GetAddress(GetAddressRequest) returns (AddressDetail);
@@ -87,4 +88,16 @@ message UpdateAddressRequest {
 message DeleteAddressRequest {
   string address_id = 1;
   string user_id = 2;
+}
+
+// 7. Create Profile
+message CreateProfileRequest {
+  string full_name = 1;
+  string phone_number = 2;
+}
+
+message CreateProfileResponse {
+  string id = 1;
+  string full_name = 2;
+  string phone_number = 3;
 }

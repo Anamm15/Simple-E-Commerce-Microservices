@@ -11,7 +11,7 @@ func RegisterNotificationRoutes(router *gin.RouterGroup, notifController *contro
 	notifGroup := router.Group("/notifications", middleware.Authenticate())
 	{
 		notifGroup.GET("", notifController.GetNotifications)
-		notifGroup.PUT("/:id/read", notifController.MarkAsRead)
+		notifGroup.PATCH("/:id/read", notifController.MarkAsRead)
 	}
 
 	adminGroup := router.Group("/admin/notifications", middleware.Authenticate(), middleware.AuthorizeRole("ADMIN"))

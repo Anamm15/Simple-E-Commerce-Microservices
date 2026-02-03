@@ -73,9 +73,10 @@ func (c *CartController) UpdateItem(ctx *gin.Context) {
 	}
 
 	userID := ctx.MustGet("user_id").(string)
+	productID := ctx.Param("product_id")
 	grpcReq := &cartpb.UpdateItemRequest{
 		UserId:    userID,
-		ProductId: req.ProductID,
+		ProductId: productID,
 		Quantity:  req.Quantity,
 	}
 
