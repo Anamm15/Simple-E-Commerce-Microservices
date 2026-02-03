@@ -10,7 +10,7 @@ import (
 )
 
 type Order struct {
-	ID     uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	ID     uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	UserID uuid.UUID `gorm:"type:uuid;not null;index" json:"user_id"`
 
 	Status       enum.OrderStatus `gorm:"type:varchar(50);not null;default:'PENDING'" json:"status"`

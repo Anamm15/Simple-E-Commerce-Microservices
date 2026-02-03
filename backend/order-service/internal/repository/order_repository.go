@@ -12,8 +12,8 @@ import (
 )
 
 type OrderRepository interface {
-	GetAll(ctx context.Context, limit *int32, offset *int32, sort *string, filter *enum.OrderStatus) ([]model.Order, int64, error)
-	GetByUserID(ctx context.Context, userID uuid.UUID, limit *int32, offset *int32, sort *string, filter *enum.OrderStatus) ([]model.Order, int64, error)
+	GetAll(ctx context.Context, limit int32, offset int32, filter enum.OrderStatus) ([]model.Order, int64, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID, limit int32, offset int32, sort string, filter enum.OrderStatus) ([]model.Order, int64, error)
 	GetByID(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
 	GetDetailOrder(ctx context.Context, orderID uuid.UUID) (*model.Order, error)
 	Create(ctx context.Context, order *model.Order) error
@@ -31,10 +31,9 @@ func NewOrderRepository(db *gorm.DB) OrderRepository {
 
 func (r *orderRepository) GetAll(
 	ctx context.Context,
-	limit *int32,
-	offset *int32,
-	sort *string,
-	filter *enum.OrderStatus,
+	limit int32,
+	offset int32,
+	filter enum.OrderStatus,
 ) ([]model.Order, int64, error) {
 	var orders []model.Order
 	var totalCount int64
@@ -42,7 +41,7 @@ func (r *orderRepository) GetAll(
 	db := r.db.WithContext(ctx).
 		Model(&model.Order{})
 
-	db = helper.ApplyQueryOptions(db, limit, offset, sort, filter)
+	db = helper.ApplyQueryOptions(db, limit, offset, "", filter)
 
 	if err := db.
 		Count(&totalCount).
@@ -60,10 +59,10 @@ func (r *orderRepository) GetAll(
 func (r *orderRepository) GetByUserID(
 	ctx context.Context,
 	userID uuid.UUID,
-	limit *int32,
-	offset *int32,
-	sort *string,
-	filter *enum.OrderStatus,
+	limit int32,
+	offset int32,
+	sort string,
+	filter enum.OrderStatus,
 ) ([]model.Order, int64, error) {
 	var orders []model.Order
 	var totalCount int64
