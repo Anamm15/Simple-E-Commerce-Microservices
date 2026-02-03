@@ -5,6 +5,7 @@ import (
 
 	"notification-service/internal/dto"
 	"notification-service/internal/helper"
+	"notification-service/internal/helper/constant"
 	"notification-service/internal/helper/mapper"
 	notificationpb "notification-service/internal/pb/notification"
 	"notification-service/internal/repository"
@@ -31,11 +32,32 @@ func (s *notificationService) GetUserNotifications(ctx context.Context, userID s
 		return nil, err
 	}
 
-	var offset *int32
-	if page != nil {
-		offset = helper.CalculateOffset(*page, *limit)
+	var limitParsed, pageParsed int32
+	var sortParsed string
+
+	if limit == nil {
+		limitParsed = constant.DefaultLimit
+	} else {
+		limitParsed = *limit
 	}
-	notifications, err := s.notificationRepo.GetUserNotifications(ctx, userIDParsed, limit, offset, sort)
+
+	if page == nil {
+		pageParsed = constant.DefaultPage
+	} else {
+		pageParsed = *page
+	}
+
+	if sort == nil {
+		sortParsed = constant.DefaultSort
+	} else {
+		sortParsed = *sort
+	}
+
+	var offset int32
+	if page != nil {
+		offset = helper.CalculateOffset(pageParsed, limitParsed)
+	}
+	notifications, err := s.notificationRepo.GetUserNotifications(ctx, userIDParsed, limitParsed, offset, sortParsed)
 	if err != nil {
 		return nil, err
 	}
