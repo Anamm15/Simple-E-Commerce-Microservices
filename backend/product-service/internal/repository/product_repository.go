@@ -17,7 +17,7 @@ type ProductRepository interface {
 	GetDetailProduct(ctx context.Context, productId uuid.UUID) (*model.Product, error)
 	CreateProduct(ctx context.Context, product *model.Product) error
 	UpdateProduct(ctx context.Context, product *model.Product) error
-	UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string) error
+	UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string, publicID string) error
 	DeleteProduct(ctx context.Context, productId uuid.UUID) error
 }
 
@@ -115,10 +115,13 @@ func (r *productRepository) UpdateProduct(ctx context.Context, product *model.Pr
 	return nil
 }
 
-func (r *productRepository) UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string) error {
+func (r *productRepository) UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string, publicID string) error {
 	if err := r.db.WithContext(ctx).
 		Where("id = ?", productID).
-		Update("thumbnail", thumbnail).Error; err != nil {
+		Updates(map[string]interface{}{
+			"thumbnail":           thumbnail,
+			"thumbnail_public_id": publicID,
+		}).Error; err != nil {
 		return err
 	}
 

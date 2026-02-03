@@ -43,7 +43,7 @@ type UpdateThumbnailProductRequest struct {
 	Image     ProductImageRequestDTO
 }
 
-func (r *CreateProductRequestDTO) ToModel(thumbnailUrl string, additionalImages []model.Image) *model.Product {
+func (r *CreateProductRequestDTO) ToModel(thumbnailUrl string, thumbnailPublicID string, additionalImages []model.Image) *model.Product {
 	var categories []model.Category
 	for _, category := range r.Categories {
 		ID, _ := util.StringToUUID(category)
@@ -51,12 +51,13 @@ func (r *CreateProductRequestDTO) ToModel(thumbnailUrl string, additionalImages 
 	}
 
 	return &model.Product{
-		Name:        r.Name,
-		Description: r.Description,
-		Price:       r.Price,
-		WeightG:     r.WeightG,
-		Thumbnail:   thumbnailUrl,
-		Categories:  categories,
-		Images:      additionalImages,
+		Name:              r.Name,
+		Description:       r.Description,
+		Price:             r.Price,
+		WeightG:           r.WeightG,
+		Thumbnail:         thumbnailUrl,
+		ThumbnailPublicID: thumbnailPublicID,
+		Categories:        categories,
+		Images:            additionalImages,
 	}
 }

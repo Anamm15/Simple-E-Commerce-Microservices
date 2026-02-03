@@ -11,9 +11,10 @@ import (
 
 type ImageRepository interface {
 	GetImageByProductID(ctx context.Context, productID uuid.UUID) (model.Image, error)
+	GetByID(ctx context.Context, imageID uuid.UUID) (model.Image, error)
 	CreateImage(ctx context.Context, image *model.Image) error
 	CreateBatchImage(ctx context.Context, images []model.Image) error
-	DeleteImage(ctx context.Context, imageID uuid.UUID) (model.Image, error)
+	DeleteImage(ctx context.Context, imageID uuid.UUID) error
 }
 
 type imageRepository struct {
@@ -28,6 +29,16 @@ func (r *imageRepository) GetImageByProductID(ctx context.Context, productID uui
 	var image model.Image
 	if err := r.db.WithContext(ctx).
 		Where("product_id = ?", productID).
+		Find(&image).Error; err != nil {
+		return model.Image{}, err
+	}
+	return image, nil
+}
+
+func (r *imageRepository) GetByID(ctx context.Context, imageID uuid.UUID) (model.Image, error) {
+	var image model.Image
+	if err := r.db.WithContext(ctx).
+		Where("id = ?", imageID).
 		Find(&image).Error; err != nil {
 		return model.Image{}, err
 	}
@@ -50,12 +61,11 @@ func (r *imageRepository) CreateBatchImage(ctx context.Context, images []model.I
 	return nil
 }
 
-func (r *imageRepository) DeleteImage(ctx context.Context, imageID uuid.UUID) (model.Image, error) {
-	var image model.Image
+func (r *imageRepository) DeleteImage(ctx context.Context, imageID uuid.UUID) error {
 	if err := r.db.WithContext(ctx).
 		Where("id = ?", imageID).
-		Delete(&image).Error; err != nil {
-		return model.Image{}, err
+		Delete(&model.Image{}).Error; err != nil {
+		return err
 	}
-	return image, nil
+	return nil
 }

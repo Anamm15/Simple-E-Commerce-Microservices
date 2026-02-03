@@ -11,7 +11,7 @@ import (
 // CloudinaryService defines the contract for file operations.
 // This interface can be moved to the service layer if you want strict strict hexagonal architecture.
 type CloudinaryService interface {
-	UploadFile(ctx context.Context, file interface{}, filename string) (string, error)
+	UploadFile(ctx context.Context, file interface{}, filename string) (string, string, error)
 	DeleteFile(ctx context.Context, publicID string) error
 }
 
@@ -34,7 +34,7 @@ func NewCloudinaryService(cloudName, apiKey, apiSecret, uploadFolder string) (Cl
 
 // UploadFile handles uploading a file (io.Reader or path) to Cloudinary.
 // It returns the Secure URL of the uploaded asset.
-func (s *cloudinaryService) UploadFile(ctx context.Context, file interface{}, filename string) (string, error) {
+func (s *cloudinaryService) UploadFile(ctx context.Context, file interface{}, filename string) (string, string, error) {
 	// 1. Set upload parameters
 	// public_id: Custom name for the file (optional, but recommended for tracking)
 	// folder: Organizing assets into specific directories
@@ -50,11 +50,11 @@ func (s *cloudinaryService) UploadFile(ctx context.Context, file interface{}, fi
 	// 'file' can be a path (string) or an io.Reader (multipart.File)
 	resp, err := s.cld.Upload.Upload(ctx, file, uploadParams)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	// 3. Return the secure URL (HTTPS)
-	return resp.SecureURL, nil
+	return resp.SecureURL, resp.PublicID, nil
 }
 
 // DeleteFile removes an asset from Cloudinary using its Public ID.

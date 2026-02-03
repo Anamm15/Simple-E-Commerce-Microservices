@@ -38,11 +38,11 @@ func (r *imageService) AddImageProduct(ctx context.Context, request dto.AddImage
 		uniqueFileName := helper.GenerateRandomFilename()
 		fileReader := util.ByteToIOReader(image.Data)
 
-		fileUrl, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
+		fileUrl, publicID, err := r.cloudStorage.UploadFile(ctx, fileReader, uniqueFileName)
 		if err != nil {
 			return nil, err
 		}
-		images = append(images, model.Image{URL: fileUrl, ProductID: productID})
+		images = append(images, model.Image{URL: fileUrl, ProductID: productID, PublicID: publicID})
 	}
 
 	err := r.imageRepo.CreateBatchImage(ctx, images)
@@ -55,8 +55,20 @@ func (r *imageService) AddImageProduct(ctx context.Context, request dto.AddImage
 	}, nil
 }
 
-func (r *imageService) DeleteImageProduct(ctx context.Context, imageID string) error {
-	err := r.cloudStorage.DeleteFile(ctx, imageID)
+func (r *imageService) DeleteImageProduct(ctx context.Context, imageIDStr string) error {
+	imageID, err := util.StringToUUID(imageIDStr)
+	if err != nil {
+		return err
+	}
+
+	image, err := r.imageRepo.GetByID(ctx, imageID)
+
+	err = r.cloudStorage.DeleteFile(ctx, image.PublicID)
+	if err != nil {
+		return err
+	}
+
+	err = r.imageRepo.DeleteImage(ctx, imageID)
 	if err != nil {
 		return err
 	}

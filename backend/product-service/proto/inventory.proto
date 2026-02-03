@@ -11,6 +11,7 @@ service InventoryService {
   rpc CheckStock(CheckStockRequest) returns (StockCount);
   rpc ReserveStock(ReserveStockRequest) returns (ReserveStockResponse);
   rpc UpdateStock(UpdateStockRequest) returns (StockCount);
+  rpc DeleteProduct(DeleteStockProductRequest) returns (google.protobuf.Empty);
   rpc ReleaseStock(ReleaseStockRequest) returns (google.protobuf.Empty);
 }
 
@@ -57,4 +58,9 @@ message UpdateStockRequest {
 message ReleaseStockRequest {
   string order_id = 1;
   string action = 2;
+}
+
+// Delete stock when product deleted
+message DeleteStockProductRequest {
+  string product_id = 1;
 }
