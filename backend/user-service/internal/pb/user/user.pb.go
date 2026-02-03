@@ -643,6 +643,119 @@ func (x *DeleteAddressRequest) GetUserId() string {
 	return ""
 }
 
+// 7. Create Profile
+type CreateProfileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FullName      string                 `protobuf:"bytes,1,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,2,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateProfileRequest) Reset() {
+	*x = CreateProfileRequest{}
+	mi := &file_proto_user_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateProfileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateProfileRequest) ProtoMessage() {}
+
+func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateProfileRequest.ProtoReflect.Descriptor instead.
+func (*CreateProfileRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CreateProfileRequest) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *CreateProfileRequest) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+type CreateProfileResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,3,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateProfileResponse) Reset() {
+	*x = CreateProfileResponse{}
+	mi := &file_proto_user_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateProfileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateProfileResponse) ProtoMessage() {}
+
+func (x *CreateProfileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateProfileResponse.ProtoReflect.Descriptor instead.
+func (*CreateProfileResponse) Descriptor() ([]byte, []int) {
+	return file_proto_user_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CreateProfileResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CreateProfileResponse) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *CreateProfileResponse) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
 var File_proto_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_proto_rawDesc = "" +
@@ -701,9 +814,17 @@ const file_proto_user_proto_rawDesc = "" +
 	"\x14DeleteAddressRequest\x12\x1d\n" +
 	"\n" +
 	"address_id\x18\x01 \x01(\tR\taddressId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId2\x98\x03\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"V\n" +
+	"\x14CreateProfileRequest\x12\x1b\n" +
+	"\tfull_name\x18\x01 \x01(\tR\bfullName\x12!\n" +
+	"\fphone_number\x18\x02 \x01(\tR\vphoneNumber\"g\n" +
+	"\x15CreateProfileResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12!\n" +
+	"\fphone_number\x18\x03 \x01(\tR\vphoneNumber2\xe2\x03\n" +
 	"\vUserService\x12@\n" +
-	"\x0eGetUserProfile\x12\x1b.user.GetUserProfileRequest\x1a\x11.user.UserProfile\x12F\n" +
+	"\x0eGetUserProfile\x12\x1b.user.GetUserProfileRequest\x1a\x11.user.UserProfile\x12H\n" +
+	"\rCreateProfile\x12\x1a.user.CreateProfileRequest\x1a\x1b.user.CreateProfileResponse\x12F\n" +
 	"\x11UpdateUserProfile\x12\x1e.user.UpdateUserProfileRequest\x1a\x11.user.UserProfile\x12<\n" +
 	"\n" +
 	"AddAddress\x12\x17.user.AddAddressRequest\x1a\x15.user.AddressResponse\x12:\n" +
@@ -724,7 +845,7 @@ func file_proto_user_proto_rawDescGZIP() []byte {
 	return file_proto_user_proto_rawDescData
 }
 
-var file_proto_user_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_proto_user_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_user_proto_goTypes = []any{
 	(*UserProfile)(nil),              // 0: user.UserProfile
 	(*AddressDetail)(nil),            // 1: user.AddressDetail
@@ -735,27 +856,31 @@ var file_proto_user_proto_goTypes = []any{
 	(*GetAddressRequest)(nil),        // 6: user.GetAddressRequest
 	(*UpdateAddressRequest)(nil),     // 7: user.UpdateAddressRequest
 	(*DeleteAddressRequest)(nil),     // 8: user.DeleteAddressRequest
-	(*timestamppb.Timestamp)(nil),    // 9: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),            // 10: google.protobuf.Empty
+	(*CreateProfileRequest)(nil),     // 9: user.CreateProfileRequest
+	(*CreateProfileResponse)(nil),    // 10: user.CreateProfileResponse
+	(*timestamppb.Timestamp)(nil),    // 11: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),            // 12: google.protobuf.Empty
 }
 var file_proto_user_proto_depIdxs = []int32{
 	1,  // 0: user.UserProfile.addresses:type_name -> user.AddressDetail
-	9,  // 1: user.UserProfile.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 2: user.UserProfile.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 1: user.UserProfile.created_at:type_name -> google.protobuf.Timestamp
+	11, // 2: user.UserProfile.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 3: user.UserService.GetUserProfile:input_type -> user.GetUserProfileRequest
-	3,  // 4: user.UserService.UpdateUserProfile:input_type -> user.UpdateUserProfileRequest
-	4,  // 5: user.UserService.AddAddress:input_type -> user.AddAddressRequest
-	6,  // 6: user.UserService.GetAddress:input_type -> user.GetAddressRequest
-	7,  // 7: user.UserService.UpdateAddress:input_type -> user.UpdateAddressRequest
-	8,  // 8: user.UserService.DeleteAddress:input_type -> user.DeleteAddressRequest
-	0,  // 9: user.UserService.GetUserProfile:output_type -> user.UserProfile
-	0,  // 10: user.UserService.UpdateUserProfile:output_type -> user.UserProfile
-	5,  // 11: user.UserService.AddAddress:output_type -> user.AddressResponse
-	1,  // 12: user.UserService.GetAddress:output_type -> user.AddressDetail
-	1,  // 13: user.UserService.UpdateAddress:output_type -> user.AddressDetail
-	10, // 14: user.UserService.DeleteAddress:output_type -> google.protobuf.Empty
-	9,  // [9:15] is the sub-list for method output_type
-	3,  // [3:9] is the sub-list for method input_type
+	9,  // 4: user.UserService.CreateProfile:input_type -> user.CreateProfileRequest
+	3,  // 5: user.UserService.UpdateUserProfile:input_type -> user.UpdateUserProfileRequest
+	4,  // 6: user.UserService.AddAddress:input_type -> user.AddAddressRequest
+	6,  // 7: user.UserService.GetAddress:input_type -> user.GetAddressRequest
+	7,  // 8: user.UserService.UpdateAddress:input_type -> user.UpdateAddressRequest
+	8,  // 9: user.UserService.DeleteAddress:input_type -> user.DeleteAddressRequest
+	0,  // 10: user.UserService.GetUserProfile:output_type -> user.UserProfile
+	10, // 11: user.UserService.CreateProfile:output_type -> user.CreateProfileResponse
+	0,  // 12: user.UserService.UpdateUserProfile:output_type -> user.UserProfile
+	5,  // 13: user.UserService.AddAddress:output_type -> user.AddressResponse
+	1,  // 14: user.UserService.GetAddress:output_type -> user.AddressDetail
+	1,  // 15: user.UserService.UpdateAddress:output_type -> user.AddressDetail
+	12, // 16: user.UserService.DeleteAddress:output_type -> google.protobuf.Empty
+	10, // [10:17] is the sub-list for method output_type
+	3,  // [3:10] is the sub-list for method input_type
 	3,  // [3:3] is the sub-list for extension type_name
 	3,  // [3:3] is the sub-list for extension extendee
 	0,  // [0:3] is the sub-list for field type_name
@@ -772,7 +897,7 @@ func file_proto_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_proto_rawDesc), len(file_proto_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
