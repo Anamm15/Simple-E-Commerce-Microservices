@@ -7,7 +7,7 @@ import (
 )
 
 type Shipment struct {
-	ID      uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	ID      uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	OrderID uuid.UUID `gorm:"type:uuid;index;not null" json:"order_id"`
 
 	CourierCode string `gorm:"type:varchar(50);not null" json:"courier_code"`
