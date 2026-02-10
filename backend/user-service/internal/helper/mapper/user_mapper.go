@@ -7,6 +7,10 @@ import (
 )
 
 func UserProfileResponseMapper(user *model.User) *userpb.UserProfile {
+	if user == nil {
+		return nil
+	}
+
 	ID := util.UUIDToString(user.ID)
 
 	var userAddresses []*userpb.AddressDetail
@@ -24,10 +28,13 @@ func UserProfileResponseMapper(user *model.User) *userpb.UserProfile {
 	}
 }
 
-func UserProfieListResponseMapper(users []model.User) []userpb.UserProfile {
-	profiles := make([]userpb.UserProfile, 0, len(users))
-	for _, user := range users {
-		profiles = append(profiles, *UserProfileResponseMapper(&user))
+func UserProfieListResponseMapper(users []model.User) []*userpb.UserProfile {
+	profiles := make([]*userpb.UserProfile, 0, len(users))
+	for i := range users {
+		profile := UserProfileResponseMapper(&users[i])
+		if profile != nil {
+			profiles = append(profiles, profile)
+		}
 	}
 	return profiles
 }

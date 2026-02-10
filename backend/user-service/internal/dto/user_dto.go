@@ -3,6 +3,7 @@ package dto
 import "user-service/internal/model"
 
 type CreateProfileRequestDTO struct {
+	UserID      string `json:"user_id"`
 	FullName    string `json:"full_name"`
 	PhoneNumber string `json:"phone_number"`
 }

@@ -13,9 +13,9 @@ import (
 )
 
 type UserService interface {
-	GetAll(ctx context.Context) ([]userpb.UserProfile, error)
+	GetAll(ctx context.Context) ([]*userpb.UserProfile, error)
 	GetByID(ctx context.Context, id string) (*userpb.UserProfile, error)
-	Create(ctx context.Context, req dto.CreateProfileRequestDTO) (*userpb.CreateProfileResponse, error)
+	Create(ctx context.Context, userID string, req dto.CreateProfileRequestDTO) (*userpb.CreateProfileResponse, error)
 	Update(ctx context.Context, req dto.UpdateUserProfileRequestDTO) (*userpb.UserProfile, error)
 }
 
@@ -27,7 +27,7 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	return &userService{userRepo: userRepo}
 }
 
-func (s *userService) GetAll(ctx context.Context) ([]userpb.UserProfile, error) {
+func (s *userService) GetAll(ctx context.Context) ([]*userpb.UserProfile, error) {
 	users, err := s.userRepo.GetAll(ctx)
 	if err != nil {
 		return nil, err
@@ -40,23 +40,30 @@ func (s *userService) GetAll(ctx context.Context) ([]userpb.UserProfile, error) 
 func (s *userService) GetByID(ctx context.Context, id string) (*userpb.UserProfile, error) {
 	idParsed, err := uuid.Parse(id)
 	if err != nil {
-		return &userpb.UserProfile{}, err
+		return nil, err
 	}
 
 	user, err := s.userRepo.GetByID(ctx, idParsed)
 	if err != nil {
-		return &userpb.UserProfile{}, err
+		return nil, err
 	}
 
 	profile := mapper.UserProfileResponseMapper(user)
 	return profile, nil
 }
 
-func (s *userService) Create(ctx context.Context, req dto.CreateProfileRequestDTO) (*userpb.CreateProfileResponse, error) {
-	user := req.ToModel()
-	err := s.userRepo.Create(ctx, user)
+func (s *userService) Create(ctx context.Context, userIDReq string, req dto.CreateProfileRequestDTO) (*userpb.CreateProfileResponse, error) {
+	userIDParsed, err := util.StringToUUID(userIDReq)
 	if err != nil {
-		return &userpb.CreateProfileResponse{}, err
+		return nil, err
+	}
+
+	user := req.ToModel()
+	user.ID = userIDParsed
+
+	err = s.userRepo.Create(ctx, user)
+	if err != nil {
+		return nil, err
 	}
 
 	return &userpb.CreateProfileResponse{
@@ -69,12 +76,12 @@ func (s *userService) Create(ctx context.Context, req dto.CreateProfileRequestDT
 func (s *userService) Update(ctx context.Context, req dto.UpdateUserProfileRequestDTO) (*userpb.UserProfile, error) {
 	userID, err := util.StringToUUID(req.UserID)
 	if err != nil {
-		return &userpb.UserProfile{}, err
+		return nil, err
 	}
 
 	user, err := s.userRepo.GetByID(ctx, userID)
 	if err != nil {
-		return &userpb.UserProfile{}, err
+		return nil, err
 	}
 
 	if req.FullName != "" {
@@ -87,7 +94,7 @@ func (s *userService) Update(ctx context.Context, req dto.UpdateUserProfileReque
 
 	err = s.userRepo.Update(ctx, user)
 	if err != nil {
-		return &userpb.UserProfile{}, err
+		return nil, err
 	}
 
 	profile := mapper.UserProfileResponseMapper(user)

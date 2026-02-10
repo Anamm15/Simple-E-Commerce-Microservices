@@ -35,6 +35,9 @@ func (r *userRepository) GetAll(ctx context.Context) ([]model.User, error) {
 		Preload("Addresses").
 		Find(&users).
 		Error
+	if err != nil {
+		return nil, err
+	}
 
 	return users, err
 }
@@ -49,7 +52,7 @@ func (r *userRepository) GetByID(ctx context.Context, id uuid.UUID) (*model.User
 		Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+		return nil, err
 	}
 
 	return &user, err

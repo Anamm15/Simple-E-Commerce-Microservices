@@ -41,7 +41,7 @@ func (c *userController) CreateUserProfile(ctx context.Context, req *userpb.Crea
 		PhoneNumber: req.PhoneNumber,
 	}
 
-	newUser, err := c.userService.Create(ctx, input)
+	newUser, err := c.userService.Create(ctx, input.UserID, input)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create profile: %v", err)
 	}
