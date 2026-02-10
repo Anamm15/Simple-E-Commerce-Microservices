@@ -73,11 +73,12 @@ message SearchFilterRequest {
   int64 max_price = 4;
   int32 page = 5;
   int32 limit = 6;
+  string sort = 7;
 }
 
 message ProductList {
   repeated Product products = 1;
-  int32 total_count = 2;
+  int64 total_count = 2;
   int32 current_page = 3;
 }
 

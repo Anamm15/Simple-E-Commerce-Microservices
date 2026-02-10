@@ -23,12 +23,13 @@ func NewProductController(productService service.ProductService, imageService se
 
 func (r *productController) GetProducts(ctx context.Context, request *productpb.SearchFilterRequest) (*productpb.ProductList, error) {
 	input := dto.SearchProductRequestDTO{
-		SearchQuery:  request.SearchQuery,
-		CategorySlug: request.CategorySlug,
-		MinPrice:     request.MinPrice,
-		MaxPrice:     request.MaxPrice,
-		Page:         request.Page,
-		Limit:        request.Limit,
+		SearchQuery: request.SearchQuery,
+		Category:    request.CategorySlug,
+		MinPrice:    request.MinPrice,
+		MaxPrice:    request.MaxPrice,
+		Page:        request.Page,
+		Limit:       request.Limit,
+		Sort:        request.Sort,
 	}
 
 	return r.productService.GetProducts(ctx, input)
@@ -38,7 +39,7 @@ func (r *productController) GetProductDetail(ctx context.Context, request *produ
 	return r.productService.GetProductDetail(ctx, request.Id)
 }
 
-func (r *productController) GetBatchProduct(ctx context.Context, request *productpb.GetProductBatchRequest) (*productpb.ProductBatchResponse, error) {
+func (r *productController) GetProductBatch(ctx context.Context, request *productpb.GetProductBatchRequest) (*productpb.ProductBatchResponse, error) {
 	return r.productService.GetProductBatch(ctx, request.ProductIds)
 }
 

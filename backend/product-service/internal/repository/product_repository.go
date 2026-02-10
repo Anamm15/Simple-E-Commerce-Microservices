@@ -10,7 +10,7 @@ import (
 )
 
 type ProductRepository interface {
-	GetAllProducts(ctx context.Context) ([]model.Product, error)
+	GetAllProducts(ctx context.Context, limit int32, offset int32, search string, category uuid.UUID, minPrice int64, maxPrice int64, sort string) ([]model.Product, int64, error)
 	GetProductByID(ctx context.Context, productId uuid.UUID) (*model.Product, error)
 	GetBatchProductByIDS(ctx context.Context, productIDs []uuid.UUID) ([]model.Product, error)
 	GetProductsByCategory(ctx context.Context, categoryId uuid.UUID) ([]model.Product, error)
@@ -29,17 +29,68 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 	return &productRepository{db: db}
 }
 
-func (r *productRepository) GetAllProducts(ctx context.Context) ([]model.Product, error) {
-	var products []model.Product
+func (r *productRepository) GetAllProducts(
+	ctx context.Context,
+	limit int32,
+	offset int32,
+	search string,
+	category uuid.UUID,
+	minPrice int64,
+	maxPrice int64,
+	sort string,
+) ([]model.Product, int64, error) {
+	var (
+		products []model.Product
+		total    int64
+	)
 
-	if err := r.db.WithContext(ctx).
-		Preload("Categories").
-		Preload("Images").
-		Find(&products).Error; err != nil {
-		return nil, err
+	baseQuery := r.db.WithContext(ctx).
+		Model(&model.Product{})
+
+	if search != "" {
+		baseQuery = baseQuery.Where("products.name ILIKE ?", "%"+search+"%")
 	}
 
-	return products, nil
+	baseQuery = baseQuery.Where(
+		"products.price BETWEEN ? AND ?",
+		minPrice,
+		maxPrice,
+	)
+
+	if category != uuid.Nil {
+		baseQuery = baseQuery.
+			Joins("JOIN product_categories pc ON pc.product_id = products.id").
+			Where("pc.category_id = ?", category)
+	}
+
+	if err := baseQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	switch sort {
+	case "price_asc":
+		baseQuery = baseQuery.Order("products.price ASC")
+	case "price_desc":
+		baseQuery = baseQuery.Order("products.price DESC")
+	case "name_asc":
+		baseQuery = baseQuery.Order("products.name ASC")
+	case "name_desc":
+		baseQuery = baseQuery.Order("products.name DESC")
+	default:
+		baseQuery = baseQuery.Order("products.created_at DESC")
+	}
+
+	err := baseQuery.
+		Preload("Images").
+		Preload("Categories").
+		Limit(int(limit)).
+		Offset(int(offset)).
+		Find(&products).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return products, total, nil
 }
 
 func (r *productRepository) GetProductByID(ctx context.Context, productId uuid.UUID) (*model.Product, error) {
@@ -117,6 +168,7 @@ func (r *productRepository) UpdateProduct(ctx context.Context, product *model.Pr
 
 func (r *productRepository) UpdateThumnailProduct(ctx context.Context, productID uuid.UUID, thumbnail string, publicID string) error {
 	if err := r.db.WithContext(ctx).
+		Model(&model.Product{}).
 		Where("id = ?", productID).
 		Updates(map[string]interface{}{
 			"thumbnail":           thumbnail,

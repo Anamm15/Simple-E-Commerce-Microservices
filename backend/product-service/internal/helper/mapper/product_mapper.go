@@ -32,7 +32,7 @@ func MapToProductDetail(product *model.Product) *productpb.ProductDetail {
 	}
 }
 
-func MapToProductList(productList []model.Product, page int32, totalCount int32) *productpb.ProductList {
+func MapToProductList(productList []model.Product, page int32, totalCount int64) *productpb.ProductList {
 	var mappedProduct []*productpb.Product
 	for _, product := range productList {
 		mappedProduct = append(mappedProduct, MapToProduct(&product))

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"math"
 
 	"product-service/internal/dto"
 	"product-service/internal/helper"
@@ -50,8 +51,58 @@ func NewProductService(
 	}
 }
 
-func (r *productService) GetProducts(ctx context.Context, metadata dto.SearchProductRequestDTO) (*productpb.ProductList, error) {
-	return &productpb.ProductList{}, nil
+func (s *productService) GetProducts(
+	ctx context.Context,
+	metadata dto.SearchProductRequestDTO,
+) (*productpb.ProductList, error) {
+	if metadata.Page <= 0 {
+		metadata.Page = 1
+	}
+
+	if metadata.Limit <= 0 {
+		metadata.Limit = 10
+	}
+
+	if metadata.Sort == "" {
+		metadata.Sort = "created_at_desc"
+	}
+
+	if metadata.MinPrice < 0 {
+		metadata.MinPrice = 0
+	}
+
+	if metadata.MaxPrice <= 0 {
+		metadata.MaxPrice = math.MaxInt64
+	}
+
+	offset := (metadata.Page - 1) * metadata.Limit
+
+	var categoryUUID uuid.UUID
+	if metadata.Category != "" {
+		parsed, err := util.StringToUUID(metadata.Category)
+		if err != nil {
+			return nil, err
+		}
+		categoryUUID = parsed
+	}
+
+	products, totalCount, err := s.productRepository.GetAllProducts(
+		ctx,
+		metadata.Limit,
+		offset,
+		metadata.SearchQuery,
+		categoryUUID,
+		metadata.MinPrice,
+		metadata.MaxPrice,
+		metadata.Sort,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	mappedProductList := mapper.MapToProductList(products, metadata.Page, totalCount)
+
+	return mappedProductList, nil
 }
 
 func (r *productService) GetProductDetail(ctx context.Context, productID string) (*productpb.ProductDetail, error) {
@@ -226,7 +277,6 @@ func (r *productService) DeleteProduct(ctx context.Context, productID string) er
 	_, err = r.inventoryClient.DeleteProduct(ctx, &inventorypb.DeleteStockProductRequest{
 		ProductId: productID,
 	})
-
 	if err != nil {
 		return err
 	}

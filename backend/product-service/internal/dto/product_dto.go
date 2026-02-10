@@ -6,12 +6,13 @@ import (
 )
 
 type SearchProductRequestDTO struct {
-	SearchQuery  string
-	CategorySlug string
-	MinPrice     int64
-	MaxPrice     int64
-	Page         int32
-	Limit        int32
+	SearchQuery string
+	Category    string
+	Sort        string
+	MinPrice    int64
+	MaxPrice    int64
+	Page        int32
+	Limit       int32
 }
 
 type CreateProductRequestDTO struct {

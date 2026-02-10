@@ -413,6 +413,7 @@ type SearchFilterRequest struct {
 	MaxPrice      int64                  `protobuf:"varint,4,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
 	Page          int32                  `protobuf:"varint,5,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
+	Sort          string                 `protobuf:"bytes,7,opt,name=sort,proto3" json:"sort,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -489,10 +490,17 @@ func (x *SearchFilterRequest) GetLimit() int32 {
 	return 0
 }
 
+func (x *SearchFilterRequest) GetSort() string {
+	if x != nil {
+		return x.Sort
+	}
+	return ""
+}
+
 type ProductList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Products      []*Product             `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
-	TotalCount    int32                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	TotalCount    int64                  `protobuf:"varint,2,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	CurrentPage   int32                  `protobuf:"varint,3,opt,name=current_page,json=currentPage,proto3" json:"current_page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -535,7 +543,7 @@ func (x *ProductList) GetProducts() []*Product {
 	return nil
 }
 
-func (x *ProductList) GetTotalCount() int32 {
+func (x *ProductList) GetTotalCount() int64 {
 	if x != nil {
 		return x.TotalCount
 	}
@@ -1259,17 +1267,18 @@ const file_proto_product_proto_rawDesc = "" +
 	"\x06rating\x18\x04 \x01(\x05R\x06rating\x12\x18\n" +
 	"\acomment\x18\x05 \x01(\tR\acomment\x129\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xc1\x01\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xd5\x01\n" +
 	"\x13SearchFilterRequest\x12!\n" +
 	"\fsearch_query\x18\x01 \x01(\tR\vsearchQuery\x12#\n" +
 	"\rcategory_slug\x18\x02 \x01(\tR\fcategorySlug\x12\x1b\n" +
 	"\tmin_price\x18\x03 \x01(\x03R\bminPrice\x12\x1b\n" +
 	"\tmax_price\x18\x04 \x01(\x03R\bmaxPrice\x12\x12\n" +
 	"\x04page\x18\x05 \x01(\x05R\x04page\x12\x14\n" +
-	"\x05limit\x18\x06 \x01(\x05R\x05limit\"\x7f\n" +
+	"\x05limit\x18\x06 \x01(\x05R\x05limit\x12\x12\n" +
+	"\x04sort\x18\a \x01(\tR\x04sort\"\x7f\n" +
 	"\vProductList\x12,\n" +
 	"\bproducts\x18\x01 \x03(\v2\x10.product.ProductR\bproducts\x12\x1f\n" +
-	"\vtotal_count\x18\x02 \x01(\x05R\n" +
+	"\vtotal_count\x18\x02 \x01(\x03R\n" +
 	"totalCount\x12!\n" +
 	"\fcurrent_page\x18\x03 \x01(\x05R\vcurrentPage\"=\n" +
 	"\x17GetProductDetailRequest\x12\x0e\n" +
