@@ -9,6 +9,8 @@ import (
 	shippingpb "shipping-service/internal/pb/shipping"
 	"shipping-service/internal/repository"
 	"shipping-service/pkg/util"
+
+	"github.com/google/uuid"
 )
 
 type ShippingService interface {
@@ -16,6 +18,7 @@ type ShippingService interface {
 	Create(ctx context.Context, request dto.CreateShipmentRequestDTO) (*shippingpb.ShipmentDetail, error)
 	CalculateCost(ctx context.Context, request dto.CalculateShippingCostRequestDTO) (*shippingpb.ShippingCostResponse, error)
 	GetShipment(ctx context.Context, orderID string) (*shippingpb.ShipmentDetail, error)
+	GetBatchShipments(ctx context.Context, shippingID []string) (*shippingpb.GetBatchShipmentsResponse, error)
 }
 
 type shippingService struct {
@@ -79,4 +82,22 @@ func (s *shippingService) GetShipment(ctx context.Context, orderID string) (*shi
 
 	shipment, err := s.shipmentRepo.GetByOrderID(ctx, orderIDParsed)
 	return mapper.MapToDetailShipmentResponse(shipment), nil
+}
+
+func (s *shippingService) GetBatchShipments(ctx context.Context, shippingID []string) (*shippingpb.GetBatchShipmentsResponse, error) {
+	shippingsIDParsed := make([]uuid.UUID, 0, len(shippingID))
+	for _, id := range shippingID {
+		idParsed, err := util.StringToUUID(id)
+		if err != nil {
+			return nil, err
+		}
+		shippingsIDParsed = append(shippingsIDParsed, idParsed)
+	}
+
+	shipments, err := s.shipmentRepo.GetShipments(ctx, shippingsIDParsed)
+	if err != nil {
+		return nil, err
+	}
+
+	return &shippingpb.GetBatchShipmentsResponse{Shipments: mapper.MapToListDetailShipmentResponse(shipments)}, nil
 }

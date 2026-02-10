@@ -15,3 +15,11 @@ func MapToDetailShipmentResponse(shipment *model.Shipment) *shippingpb.ShipmentD
 		ShippingCost:   shipment.ShippingCost,
 	}
 }
+
+func MapToListDetailShipmentResponse(shipments []model.Shipment) []*shippingpb.ShipmentDetail {
+	var response []*shippingpb.ShipmentDetail
+	for _, shipment := range shipments {
+		response = append(response, MapToDetailShipmentResponse(&shipment))
+	}
+	return response
+}

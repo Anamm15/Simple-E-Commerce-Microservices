@@ -11,6 +11,7 @@ import (
 )
 
 type ShippingRepository interface {
+	GetShipments(ctx context.Context, ids []uuid.UUID) ([]model.Shipment, error)
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Shipment, error)
 	GetByOrderID(ctx context.Context, orderID uuid.UUID) (*model.Shipment, error)
 	Create(ctx context.Context, shipment *model.Shipment) error
@@ -23,6 +24,21 @@ type shippingRepository struct {
 
 func NewShippingRepository(db *gorm.DB) ShippingRepository {
 	return &shippingRepository{db: db}
+}
+
+func (r *shippingRepository) GetShipments(
+	ctx context.Context,
+	ids []uuid.UUID,
+) ([]model.Shipment, error) {
+	var shipments []model.Shipment
+
+	err := r.db.
+		WithContext(ctx).
+		Where("id in (?)", ids).
+		Find(&shipments).
+		Error
+
+	return shipments, err
 }
 
 func (r *shippingRepository) GetByID(

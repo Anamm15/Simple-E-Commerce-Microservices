@@ -22,6 +22,7 @@ const (
 	ShippingService_OfferShippingCost_FullMethodName  = "/shipping.ShippingService/OfferShippingCost"
 	ShippingService_CalculateFinalCost_FullMethodName = "/shipping.ShippingService/CalculateFinalCost"
 	ShippingService_GetShipment_FullMethodName        = "/shipping.ShippingService/GetShipment"
+	ShippingService_GetBatchsShipment_FullMethodName  = "/shipping.ShippingService/GetBatchsShipment"
 	ShippingService_Create_FullMethodName             = "/shipping.ShippingService/Create"
 )
 
@@ -32,6 +33,7 @@ type ShippingServiceClient interface {
 	OfferShippingCost(ctx context.Context, in *ShippingCostOfferRequest, opts ...grpc.CallOption) (*ShippingCostOfferResponse, error)
 	CalculateFinalCost(ctx context.Context, in *ShippingCostRequest, opts ...grpc.CallOption) (*ShippingCostResponse, error)
 	GetShipment(ctx context.Context, in *GetShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error)
+	GetBatchsShipment(ctx context.Context, in *GetBatchShipmentsRequest, opts ...grpc.CallOption) (*GetBatchShipmentsResponse, error)
 	Create(ctx context.Context, in *CreateShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error)
 }
 
@@ -73,6 +75,16 @@ func (c *shippingServiceClient) GetShipment(ctx context.Context, in *GetShipment
 	return out, nil
 }
 
+func (c *shippingServiceClient) GetBatchsShipment(ctx context.Context, in *GetBatchShipmentsRequest, opts ...grpc.CallOption) (*GetBatchShipmentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBatchShipmentsResponse)
+	err := c.cc.Invoke(ctx, ShippingService_GetBatchsShipment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *shippingServiceClient) Create(ctx context.Context, in *CreateShipmentRequest, opts ...grpc.CallOption) (*ShipmentDetail, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ShipmentDetail)
@@ -90,6 +102,7 @@ type ShippingServiceServer interface {
 	OfferShippingCost(context.Context, *ShippingCostOfferRequest) (*ShippingCostOfferResponse, error)
 	CalculateFinalCost(context.Context, *ShippingCostRequest) (*ShippingCostResponse, error)
 	GetShipment(context.Context, *GetShipmentRequest) (*ShipmentDetail, error)
+	GetBatchsShipment(context.Context, *GetBatchShipmentsRequest) (*GetBatchShipmentsResponse, error)
 	Create(context.Context, *CreateShipmentRequest) (*ShipmentDetail, error)
 	mustEmbedUnimplementedShippingServiceServer()
 }
@@ -109,6 +122,9 @@ func (UnimplementedShippingServiceServer) CalculateFinalCost(context.Context, *S
 }
 func (UnimplementedShippingServiceServer) GetShipment(context.Context, *GetShipmentRequest) (*ShipmentDetail, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetShipment not implemented")
+}
+func (UnimplementedShippingServiceServer) GetBatchsShipment(context.Context, *GetBatchShipmentsRequest) (*GetBatchShipmentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBatchsShipment not implemented")
 }
 func (UnimplementedShippingServiceServer) Create(context.Context, *CreateShipmentRequest) (*ShipmentDetail, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
@@ -188,6 +204,24 @@ func _ShippingService_GetShipment_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ShippingService_GetBatchsShipment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBatchShipmentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).GetBatchsShipment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ShippingService_GetBatchsShipment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).GetBatchsShipment(ctx, req.(*GetBatchShipmentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ShippingService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateShipmentRequest)
 	if err := dec(in); err != nil {
@@ -224,6 +258,10 @@ var ShippingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetShipment",
 			Handler:    _ShippingService_GetShipment_Handler,
+		},
+		{
+			MethodName: "GetBatchsShipment",
+			Handler:    _ShippingService_GetBatchsShipment_Handler,
 		},
 		{
 			MethodName: "Create",

@@ -27,7 +27,7 @@ func (s *ShippingController) OfferShippingCost(ctx context.Context, request *shi
 	return s.ShippingService.OfferShippingCost(ctx, input)
 }
 
-func (s *ShippingController) CalculateCost(ctx context.Context, request *shippingpb.ShippingCostRequest) (*shippingpb.ShippingCostResponse, error) {
+func (s *ShippingController) CalculateFinalCost(ctx context.Context, request *shippingpb.ShippingCostRequest) (*shippingpb.ShippingCostResponse, error) {
 	input := dto.CalculateShippingCostRequestDTO{
 		OriginCity:      request.OriginCity,
 		DestinationCity: request.DestinationCity,
@@ -51,6 +51,15 @@ func (s *ShippingController) GetShipment(ctx context.Context, request *shippingp
 	}
 
 	return shipment, nil
+}
+
+func (s *ShippingController) GetBatchShipment(ctx context.Context, request *shippingpb.GetBatchShipmentsRequest) (*shippingpb.GetBatchShipmentsResponse, error) {
+	shipments, err := s.ShippingService.GetBatchShipments(ctx, request.ShippingIds)
+	if err != nil {
+		return nil, err
+	}
+
+	return shipments, nil
 }
 
 func (s *ShippingController) CreateShipment(ctx context.Context, request *shippingpb.CreateShipmentRequest) (*shippingpb.ShipmentDetail, error) {
