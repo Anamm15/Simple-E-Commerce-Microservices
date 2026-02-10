@@ -66,7 +66,7 @@ func (c *orderController) GetOrderDetail(ctx context.Context, request *orderpb.G
 	return c.orderService.GetDetailOrder(ctx, request.OrderId)
 }
 
-func (c *orderController) CreateOrder(ctx context.Context, request *orderpb.CheckoutRequest) (*orderpb.CheckoutResponse, error) {
+func (c *orderController) Checkout(ctx context.Context, request *orderpb.CheckoutRequest) (*orderpb.CheckoutResponse, error) {
 	input := dto.CheckoutRequestDTO{
 		UserID:      request.UserId,
 		Email:       request.Email,

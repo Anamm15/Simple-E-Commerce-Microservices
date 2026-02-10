@@ -88,7 +88,10 @@ func MapToOrderItem(item *model.OrderItem) *orderpb.OrderItem {
 	}
 }
 
-func MapToOrderResponse(order model.Order, shipment *shippingpb.ShipmentDetail) *orderpb.OrderDetail {
+func MapToOrderResponse(
+	order model.Order,
+	shipment *shippingpb.ShipmentDetail,
+) *orderpb.OrderDetail {
 	address, _ := mapAddressSnapshot(order.ShippingAddressSnapshot)
 
 	items := make([]*orderpb.OrderItem, 0, len(order.Items))
@@ -96,22 +99,24 @@ func MapToOrderResponse(order model.Order, shipment *shippingpb.ShipmentDetail) 
 		items = append(items, MapToOrderItem(&item))
 	}
 
-	return &orderpb.OrderDetail{
-		Id:           util.UUIDToString(order.ID),
-		UserId:       util.UUIDToString(order.UserID),
-		Status:       MapToProtoOrderStatus(order.Status),
-		TotalAmount:  order.TotalAmount,
-		ShippingCost: order.ShippingCost,
-
+	resp := &orderpb.OrderDetail{
+		Id:              util.UUIDToString(order.ID),
+		UserId:          util.UUIDToString(order.UserID),
+		Status:          MapToProtoOrderStatus(order.Status),
+		TotalAmount:     order.TotalAmount,
+		ShippingCost:    order.ShippingCost,
 		ShippingAddress: address,
-		ShippingCourier: shipment.CourierCode,
-		ShippingService: shipment.ServiceCode,
-		TrackingNumber:  shipment.TrackingNumber,
-		ShippingStatus:  shipment.Status,
-
-		Items: items,
-		// CreatedAt: timestamppb.New(order.CreatedAt),
+		Items:           items,
 	}
+
+	if shipment != nil {
+		resp.ShippingCourier = shipment.CourierCode
+		resp.ShippingService = shipment.ServiceCode
+		resp.TrackingNumber = shipment.TrackingNumber
+		resp.ShippingStatus = shipment.Status
+	}
+
+	return resp
 }
 
 func MapToOrderListResponse(orders []model.Order) []*orderpb.OrderDetail {

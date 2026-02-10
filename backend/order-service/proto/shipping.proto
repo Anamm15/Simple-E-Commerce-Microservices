@@ -10,6 +10,7 @@ service ShippingService {
   rpc OfferShippingCost(ShippingCostOfferRequest) returns (ShippingCostOfferResponse);
   rpc CalculateFinalCost(ShippingCostRequest) returns (ShippingCostResponse);
   rpc GetShipment(GetShipmentRequest) returns (ShipmentDetail);
+  rpc GetBatchsShipment(GetBatchShipmentsRequest) returns (GetBatchShipmentsResponse);
   rpc Create(CreateShipmentRequest) returns (ShipmentDetail);
 }
 
@@ -73,4 +74,13 @@ message CreateShipmentRequest {
   string service_code = 3;
   string tracking_number = 4;
   int64 shipping_cost = 5;
+}
+
+// 4. Get Batch Shipment
+message GetBatchShipmentsRequest {
+  repeated string shipping_ids = 1;
+}
+
+message GetBatchShipmentsResponse {
+  repeated ShipmentDetail shipments = 1;
 }

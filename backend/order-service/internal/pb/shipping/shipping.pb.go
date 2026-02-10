@@ -562,6 +562,95 @@ func (x *CreateShipmentRequest) GetShippingCost() int64 {
 	return 0
 }
 
+// 4. Get Batch Shipment
+type GetBatchShipmentsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ShippingIds   []string               `protobuf:"bytes,1,rep,name=shipping_ids,json=shippingIds,proto3" json:"shipping_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBatchShipmentsRequest) Reset() {
+	*x = GetBatchShipmentsRequest{}
+	mi := &file_proto_shipping_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBatchShipmentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBatchShipmentsRequest) ProtoMessage() {}
+
+func (x *GetBatchShipmentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_shipping_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBatchShipmentsRequest.ProtoReflect.Descriptor instead.
+func (*GetBatchShipmentsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_shipping_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetBatchShipmentsRequest) GetShippingIds() []string {
+	if x != nil {
+		return x.ShippingIds
+	}
+	return nil
+}
+
+type GetBatchShipmentsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Shipments     []*ShipmentDetail      `protobuf:"bytes,1,rep,name=shipments,proto3" json:"shipments,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBatchShipmentsResponse) Reset() {
+	*x = GetBatchShipmentsResponse{}
+	mi := &file_proto_shipping_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBatchShipmentsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBatchShipmentsResponse) ProtoMessage() {}
+
+func (x *GetBatchShipmentsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_shipping_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBatchShipmentsResponse.ProtoReflect.Descriptor instead.
+func (*GetBatchShipmentsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_shipping_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetBatchShipmentsResponse) GetShipments() []*ShipmentDetail {
+	if x != nil {
+		return x.Shipments
+	}
+	return nil
+}
+
 var File_proto_shipping_proto protoreflect.FileDescriptor
 
 const file_proto_shipping_proto_rawDesc = "" +
@@ -607,11 +696,16 @@ const file_proto_shipping_proto_rawDesc = "" +
 	"\fcourier_code\x18\x02 \x01(\tR\vcourierCode\x12!\n" +
 	"\fservice_code\x18\x03 \x01(\tR\vserviceCode\x12'\n" +
 	"\x0ftracking_number\x18\x04 \x01(\tR\x0etrackingNumber\x12#\n" +
-	"\rshipping_cost\x18\x05 \x01(\x03R\fshippingCost2\xd0\x02\n" +
+	"\rshipping_cost\x18\x05 \x01(\x03R\fshippingCost\"=\n" +
+	"\x18GetBatchShipmentsRequest\x12!\n" +
+	"\fshipping_ids\x18\x01 \x03(\tR\vshippingIds\"S\n" +
+	"\x19GetBatchShipmentsResponse\x126\n" +
+	"\tshipments\x18\x01 \x03(\v2\x18.shipping.ShipmentDetailR\tshipments2\xae\x03\n" +
 	"\x0fShippingService\x12\\\n" +
 	"\x11OfferShippingCost\x12\".shipping.ShippingCostOfferRequest\x1a#.shipping.ShippingCostOfferResponse\x12S\n" +
 	"\x12CalculateFinalCost\x12\x1d.shipping.ShippingCostRequest\x1a\x1e.shipping.ShippingCostResponse\x12E\n" +
-	"\vGetShipment\x12\x1c.shipping.GetShipmentRequest\x1a\x18.shipping.ShipmentDetail\x12C\n" +
+	"\vGetShipment\x12\x1c.shipping.GetShipmentRequest\x1a\x18.shipping.ShipmentDetail\x12\\\n" +
+	"\x11GetBatchsShipment\x12\".shipping.GetBatchShipmentsRequest\x1a#.shipping.GetBatchShipmentsResponse\x12C\n" +
 	"\x06Create\x12\x1f.shipping.CreateShipmentRequest\x1a\x18.shipping.ShipmentDetailB\"Z /internal/pb/shipping;shippingpbb\x06proto3"
 
 var (
@@ -626,7 +720,7 @@ func file_proto_shipping_proto_rawDescGZIP() []byte {
 	return file_proto_shipping_proto_rawDescData
 }
 
-var file_proto_shipping_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_shipping_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_shipping_proto_goTypes = []any{
 	(*ShipmentDetail)(nil),            // 0: shipping.ShipmentDetail
 	(*ShippingCostOfferRequest)(nil),  // 1: shipping.ShippingCostOfferRequest
@@ -636,24 +730,29 @@ var file_proto_shipping_proto_goTypes = []any{
 	(*ShippingCostResponse)(nil),      // 5: shipping.ShippingCostResponse
 	(*GetShipmentRequest)(nil),        // 6: shipping.GetShipmentRequest
 	(*CreateShipmentRequest)(nil),     // 7: shipping.CreateShipmentRequest
-	(*timestamppb.Timestamp)(nil),     // 8: google.protobuf.Timestamp
+	(*GetBatchShipmentsRequest)(nil),  // 8: shipping.GetBatchShipmentsRequest
+	(*GetBatchShipmentsResponse)(nil), // 9: shipping.GetBatchShipmentsResponse
+	(*timestamppb.Timestamp)(nil),     // 10: google.protobuf.Timestamp
 }
 var file_proto_shipping_proto_depIdxs = []int32{
-	8, // 0: shipping.ShipmentDetail.estimated_delivery:type_name -> google.protobuf.Timestamp
-	2, // 1: shipping.ShippingCostOfferResponse.options:type_name -> shipping.ShippingOption
-	1, // 2: shipping.ShippingService.OfferShippingCost:input_type -> shipping.ShippingCostOfferRequest
-	4, // 3: shipping.ShippingService.CalculateFinalCost:input_type -> shipping.ShippingCostRequest
-	6, // 4: shipping.ShippingService.GetShipment:input_type -> shipping.GetShipmentRequest
-	7, // 5: shipping.ShippingService.Create:input_type -> shipping.CreateShipmentRequest
-	3, // 6: shipping.ShippingService.OfferShippingCost:output_type -> shipping.ShippingCostOfferResponse
-	5, // 7: shipping.ShippingService.CalculateFinalCost:output_type -> shipping.ShippingCostResponse
-	0, // 8: shipping.ShippingService.GetShipment:output_type -> shipping.ShipmentDetail
-	0, // 9: shipping.ShippingService.Create:output_type -> shipping.ShipmentDetail
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	10, // 0: shipping.ShipmentDetail.estimated_delivery:type_name -> google.protobuf.Timestamp
+	2,  // 1: shipping.ShippingCostOfferResponse.options:type_name -> shipping.ShippingOption
+	0,  // 2: shipping.GetBatchShipmentsResponse.shipments:type_name -> shipping.ShipmentDetail
+	1,  // 3: shipping.ShippingService.OfferShippingCost:input_type -> shipping.ShippingCostOfferRequest
+	4,  // 4: shipping.ShippingService.CalculateFinalCost:input_type -> shipping.ShippingCostRequest
+	6,  // 5: shipping.ShippingService.GetShipment:input_type -> shipping.GetShipmentRequest
+	8,  // 6: shipping.ShippingService.GetBatchsShipment:input_type -> shipping.GetBatchShipmentsRequest
+	7,  // 7: shipping.ShippingService.Create:input_type -> shipping.CreateShipmentRequest
+	3,  // 8: shipping.ShippingService.OfferShippingCost:output_type -> shipping.ShippingCostOfferResponse
+	5,  // 9: shipping.ShippingService.CalculateFinalCost:output_type -> shipping.ShippingCostResponse
+	0,  // 10: shipping.ShippingService.GetShipment:output_type -> shipping.ShipmentDetail
+	9,  // 11: shipping.ShippingService.GetBatchsShipment:output_type -> shipping.GetBatchShipmentsResponse
+	0,  // 12: shipping.ShippingService.Create:output_type -> shipping.ShipmentDetail
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_shipping_proto_init() }
@@ -667,7 +766,7 @@ func file_proto_shipping_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_shipping_proto_rawDesc), len(file_proto_shipping_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

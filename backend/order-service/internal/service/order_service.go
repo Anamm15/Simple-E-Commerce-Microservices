@@ -61,6 +61,11 @@ func (s *orderService) GetAll(ctx context.Context, request dto.AdminOrderFilterR
 		return nil, err
 	}
 
+	var ordersIDs []string
+	for _, order := range orders {
+		ordersIDs = append(ordersIDs, order.ID.String())
+	}
+
 	return &orderpb.OrderList{
 		Orders:      mapper.MapToOrderListResponse(orders),
 		TotalCount:  totalCount,
